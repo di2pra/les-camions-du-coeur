@@ -336,37 +336,6 @@ button:focus {
   
       }
 
-      /*.distribution-title {
-        font-size: 0.6rem;
-        color: white;
-        text-align: center;
-        padding: 5px 0 20px 0;
-        
-      
-  
-        flex-grow: 1;
-  
-        @media (min-width: $responsive-width-l) {
-          font-size: 1.2rem;
-          text-align: left;
-          padding: 5px 0;
-        }
-
-        div {
-          display: flex;
-          align-items: center;
-
-          i {
-            width: 20px;
-            height: 20px;
-            display: block;
-            margin-right: 10px;
-          }
-        }
-
-        
-      }*/
-
   
     }
   
@@ -392,93 +361,7 @@ button:focus {
   
       .buttons-container {
         text-align: center;
-        
       }
-  
-      .user-list-container {
-        display: grid;
-        grid-template-columns: repeat(1, 1fr);
-        grid-auto-rows: 1fr;
-  
-        @media (min-width: $responsive-width-s) {
-          grid-template-columns: repeat(3, 1fr);
-        }
-  
-        // Medium devices (tablets, 768px and up)
-        @media (min-width: $responsive-width-m) {
-          grid-template-columns: repeat(4, 1fr);
-        }
-  
-        // Large devices (desktops, 992px and up)
-        @media (min-width: $responsive-width-l) { 
-          grid-template-columns: repeat(6, 1fr);
-        }
-  
-        .planning-user {
-          padding: 0.5rem;
-          margin: 0.1rem;
-  
-          display: flex;
-          flex-flow: row wrap;
-          align-content: flex-start;
-          align-items: center;
-  
-          //height: 50px;
-  
-          @media (min-width: $responsive-width-s) {
-            //height: 100px;
-            text-align: center;
-          }
-  
-  
-          .planning-user-name {
-  
-            flex-grow: 1;
-  
-            p {
-              margin: 0;
-              color: $base-color;
-  
-              @media (min-width: $responsive-width-s) {
-                margin-top: 5px;
-              }
-  
-            }
-          }
-  
-          .planning-user-image {
-  
-            width: 2.5rem;
-            height: 2.5rem;
-            margin-right: 20px;
-  
-            @media (min-width: $responsive-width-s) {
-              width: 100%;
-              height: 4rem;
-              margin-right: 0px;
-            }
-  
-            .planning-user-image-content {
-              width: 100%;
-              height: 100%;
-              border-radius: 50%;
-              display: inline-block;
-              background-repeat:no-repeat;
-              background-position: center center;
-              background-size: cover;
-  
-              @media (min-width: $responsive-width-s) {
-                width: 4rem;
-                height: 4rem;
-              }
-  
-            }
-            
-          }
-  
-        }
-  
-      } 
   
     }
 
@@ -998,92 +881,6 @@ button:focus {
   }
 
 
-  .user-list-container {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    grid-auto-rows: 1fr;
-
-    @media (min-width: $responsive-width-s) {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    // Medium devices (tablets, 768px and up)
-    @media (min-width: $responsive-width-m) {
-      grid-template-columns: repeat(6, 1fr);
-    }
-
-    // Large devices (desktops, 992px and up)
-    @media (min-width: $responsive-width-l) { 
-      grid-template-columns: repeat(8, 1fr);
-    }
-
-    .item-user {
-      padding: 0.5rem;
-      margin: 0.1rem;
-
-      display: flex;
-      flex-flow: row wrap;
-      align-content: flex-start;
-      align-items: center;
-
-      //height: 50px;
-
-      @media (min-width: $responsive-width-s) {
-        //height: 100px;
-        text-align: center;
-      }
-
-
-      .item-user-name {
-
-        flex-grow: 1;
-
-        p {
-          margin: 0;
-          color: $base-color;
-
-          @media (min-width: $responsive-width-s) {
-            margin-top: 5px;
-          }
-
-        }
-      }
-
-      .item-user-image {
-
-        width: 2.5rem;
-        height: 2.5rem;
-        margin-right: 20px;
-
-        @media (min-width: $responsive-width-s) {
-          width: 100%;
-          height: 4rem;
-          margin-right: 0px;
-        }
-
-        .item-user-image-content {
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-          display: inline-block;
-          background-repeat:no-repeat;
-          background-position: center center;
-          background-size: cover;
-
-          @media (min-width: $responsive-width-s) {
-            width: 4rem;
-            height: 4rem;
-          }
-
-        }
-        
-      }
-
-    }
-
-  }
-
-
   .demande-adhesion-list {
 
     display: grid;
@@ -1184,4 +981,90 @@ button:focus {
     line-height: 30px;
     display: inline-block;
   }
+}
+
+
+
+
+.user-list-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-auto-rows: 1fr;
+
+  @media (min-width: $responsive-width-s) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  // Medium devices (tablets, 768px and up)
+  @media (min-width: $responsive-width-m) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  // Large devices (desktops, 992px and up)
+  @media (min-width: $responsive-width-l) { 
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .user {
+    padding: 0.3rem;
+    margin: 0.1rem;
+
+    display: flex;
+    flex-flow: row wrap;
+    align-content: flex-start;
+    align-items: center;
+
+    @media (min-width: $responsive-width-s) {
+      padding: 0.5rem;
+      text-align: center;
+    }
+
+
+    .user-name {
+
+      flex-grow: 1;
+
+      p {
+        margin: 0;
+        color: $base-color;
+
+        @media (min-width: $responsive-width-s) {
+          margin-top: 5px;
+        }
+
+      }
+    }
+
+    .user-image {
+
+      width: 2.5rem;
+      height: 2.5rem;
+      margin-right: 15px;
+
+      @media (min-width: $responsive-width-s) {
+        width: 100%;
+        height: 4rem;
+        margin-right: 0px;
+      }
+
+      .user-image-content {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        display: inline-block;
+        background-repeat:no-repeat;
+        background-position: center center;
+        background-size: cover;
+
+        @media (min-width: $responsive-width-s) {
+          width: 4rem;
+          height: 4rem;
+        }
+
+      }
+      
+    }
+
+  }
+
 }

@@ -3,10 +3,9 @@ import { Link, useParams, useHistory } from 'react-router-dom';
 import { firestore } from "../Firebase";
 import PageLoading from '../components/PageLoading';
 import {PinIcon, CalendarIcon} from '../components/Icons';
-import AlertBox from '../components/AlertBox';
 import {capitalize} from '../components/Helpers';
 import DistributionCard from '../components/DistributionCard';
-
+import AlertBox from '../components/AlertBox';
 
 function Distribution() {
 
@@ -26,7 +25,7 @@ function Distribution() {
         isProcessing: true,
         data: []
       }
-    })
+    });
 
     let centres = [];
 
@@ -43,7 +42,7 @@ function Distribution() {
 
       setError({
         type: "error",
-        message: error.message
+        message: "Erreur lors du chargement de la liste des distributions : " + error.message
       })
 
     }
@@ -60,11 +59,13 @@ function Distribution() {
 
   useEffect(() => {
 
-    if(jour === null || nom == null) {
-      history.push("/distribution");
+    if(centreList.isProcessing == null) {
+      loadCentreList(); 
+    }
+
+    if((jour == null || nom === null)) {
       setSelectedCentre(null);
     } else {
-
       if(centreList.isProcessing === false) {
 
         let selectedCentre = centreList.data.find((centre) => {
@@ -80,24 +81,21 @@ function Distribution() {
       
     }
 
-  }, [jour, nom, history, centreList]);
+  }, [jour, nom, history, centreList, selectedCentre, loadCentreList]);
 
-
-  useEffect(() => {
-
-    if(centreList.isProcessing == null) {
-      loadCentreList(); 
-    }
-
-  }, [loadCentreList, centreList.isProcessing, jour, nom]);
 
   if(centreList.isProcessing === true) {
     return <PageLoading />;
+  } else if(error !== null) {
+    return (
+      <div className="container-fluid container-80">
+        <AlertBox error={error} />
+      </div>
+    )
   } else if(selectedCentre == null) {
 
     return (
       <div className="container-fluid">
-        <AlertBox type={error == null ? '' : error.type} message={error == null ? '' : error.message} />
         <div className="home-card-container">
           {
             centreList.data.map((centre) => {
@@ -108,10 +106,8 @@ function Distribution() {
       </div>
     )
 
-  } else if(selectedCentre != null) {
-
+  } else if(selectedCentre !== null) {
     return <DistributionCard centre={selectedCentre}/>;
-
   } else {
     return null
   }

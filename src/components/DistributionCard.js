@@ -2,19 +2,20 @@ import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { firestore, firebaseApp } from "../Firebase";
 import PageLoading from '../components/PageLoading';
 import {UserContext} from "./../providers/UserProvider";
-import AlertBox from '../components/AlertBox';
-import {capitalize} from '../components/Helpers';
+import UserList from './UserList';
+import AlertBox from './AlertBox';
+import DistributionDetailSection from './DistributionDetailsSection';
 
 function DistributionCard({centre}) {
 
 
   const {connectedUser} = useContext(UserContext);
 
-  const [error, setError] = useState({type: "", message: ""});
+  const [error, setError] = useState(null);
   const [selectedCentre, setSelectedCentre] = useState({isProcessing: false, data: centre});
   const [centreMembreDetailsList, setCentreMembreDetailsList] = useState({isProcessing: true, data: []});
-  const [centreDemandeAdhesionDetailsList, setCentreDemandeAdhesionDetailsList] = useState({isProcessing: true, data: []});
-  const [connectedUserAdhesionDetails, setConnectedUserAdhesionDetails] = useState({isProcessing: true, data: null});
+  const [centreDemandeAdhesionDetailsList, setCentreDemandeAdhesionDetailsList] = useState({isProcessing: false, data: []});
+  const [connectedUserAdhesionDetails, setConnectedUserAdhesionDetails] = useState({isProcessing: false, data: null});
   
 
   const isConnectedUserResponsable = useCallback((membres) => {
@@ -146,14 +147,6 @@ function DistributionCard({centre}) {
     let membreList = [];
     let membreDetailsList = [];
 
-    setCentreMembreDetailsList((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: true,
-        data: []
-      }
-    });
-
     try {
 
       // retrieve membres id and type
@@ -211,15 +204,7 @@ function DistributionCard({centre}) {
       }
     }
 
-    //await delay(5000);
-
-    setCentreMembreDetailsList((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: false,
-        data: membreDetailsList
-      }
-    });
+    
 
     return membreDetailsList;
 
@@ -227,33 +212,63 @@ function DistributionCard({centre}) {
 
   useEffect(() => {
 
-    setSelectedCentre({
-      isProcessing: false,
-      data: centre
-    });
-
-  }, [centre]);
-
-
-  useEffect(() => {
-
-    loadCentreMembreDetails(centre.uid).then((membreList) => {
-      if(isConnectedUserResponsable(membreList)) {
-        loadCentreDemandeAdhesionDetails(centre.uid);
-      } else {
-        setCentreDemandeAdhesionDetailsList((prevState) => {
-          return {
-            ...prevState,
-            isProcessing: false
-          }
-        })
+    setCentreMembreDetailsList((prevState) => {
+      return {
+        ...prevState,
+        isProcessing: true,
+        data: []
       }
     });
 
-    loadConnectedUserAdhesionDetails(centre.uid);
+    loadCentreMembreDetails(centre.uid).then((membreList) => {
+
+      if(isConnectedUserMember(membreList)) {
+
+        if(isConnectedUserResponsable(membreList)) {
+          loadCentreDemandeAdhesionDetails(centre.uid).then(() => {
+
+            setCentreMembreDetailsList((prevState) => {
+              return {
+                ...prevState,
+                isProcessing: false,
+                data: membreList
+              }
+            });
+
+          });
+        } else {
+
+          setCentreMembreDetailsList((prevState) => {
+            return {
+              ...prevState,
+              isProcessing: false,
+              data: membreList
+            }
+          });
+
+        }
+
+      } else {
+
+        loadConnectedUserAdhesionDetails(centre.uid).then(() => {
+          setCentreMembreDetailsList((prevState) => {
+            return {
+              ...prevState,
+              isProcessing: false,
+              data: membreList
+            }
+          });
+        });
+      }
+
+      
+
+    });
+
+    
 
 
-  }, [centre.uid, loadCentreMembreDetails, isConnectedUserResponsable, loadCentreDemandeAdhesionDetails, loadConnectedUserAdhesionDetails]);
+  }, [centre.uid, loadCentreMembreDetails, isConnectedUserMember, isConnectedUserResponsable, loadCentreDemandeAdhesionDetails, loadConnectedUserAdhesionDetails]);
 
 
 
@@ -331,8 +346,7 @@ function DistributionCard({centre}) {
     setCentreMembreDetailsList((prevState) => {
       return {
         ...prevState,
-        isProcessing: true,
-        data: []
+        isProcessing: true
       }
     });
 
@@ -342,16 +356,29 @@ function DistributionCard({centre}) {
       await batch.commit();
 
       loadCentreMembreDetails(centre.uid).then((membreList) => {
+
         if(isConnectedUserResponsable(membreList)) {
-          loadCentreDemandeAdhesionDetails(centre.uid);
+
+          loadCentreDemandeAdhesionDetails(centre.uid).then(() => {
+            setCentreMembreDetailsList((prevState) => {
+              return {
+                ...prevState,
+                isProcessing: false,
+                data: membreList
+              }
+            });
+          });
+
         } else {
-          setCentreDemandeAdhesionDetailsList((prevState) => {
+
+          setCentreMembreDetailsList((prevState) => {
             return {
               ...prevState,
               isProcessing: false,
-              data: []
+              data: membreList
             }
           })
+
         }
 
       });
@@ -373,7 +400,6 @@ function DistributionCard({centre}) {
       });
 
     }
-
     
     
 
@@ -385,8 +411,7 @@ function DistributionCard({centre}) {
     setCentreDemandeAdhesionDetailsList((prevState) => {
       return {
         ...prevState,
-        isProcessing: true,
-        data: []
+        isProcessing: true
       }
     });
 
@@ -413,20 +438,21 @@ function DistributionCard({centre}) {
         message: "Erreur lors du refus d'une demande d'adhésion : " + error.message
       });
 
+      setCentreDemandeAdhesionDetailsList((prevState) => {
+        return {
+          ...prevState,
+          isProcessing: false
+        }
+      });
+
     }
 
-    setCentreDemandeAdhesionDetailsList((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: false
-      }
-    });
+    
 
     
     
 
   }, [centreMembreDetailsList.data, centre.uid, isConnectedUserResponsable, loadCentreDemandeAdhesionDetails]);
-
 
 
   const saveCentreDesc = useCallback(async (descValue) => {
@@ -470,18 +496,17 @@ function DistributionCard({centre}) {
   }, [centre.uid]);
 
 
-  if(error.type !== "") {
+  if([selectedCentre.isProcessing, centreMembreDetailsList.isProcessing, centreDemandeAdhesionDetailsList.isProcessing, connectedUserAdhesionDetails.isProcessing].includes(true)) {
+    return <PageLoading />;
+  } else if(error !== null) {
     return (
       <div id="distribution-details" className="container-fluid container-80">
-        <AlertBox type={error == null ? '' : error.type} message={error == null ? '' : error.message} />
+        <AlertBox error={error} />
       </div>
     )
-  } else if(selectedCentre.isProcessing === true || centreMembreDetailsList.isProcessing === true || centreDemandeAdhesionDetailsList.isProcessing === true || connectedUserAdhesionDetails.isProcessing === true) {
-    return (<PageLoading />);
   } else {
     return (
       <div id="distribution-details" className="container-fluid container-80">
-        <AlertBox type={error == null ? '' : error.type} message={error == null ? '' : error.message} />
         <RegisterBanner adhesion={connectedUserAdhesionDetails.data} connectedUser={connectedUser} onRegisterClick={onRegisterClick} isConnectedUserMember={isConnectedUserMember(centreMembreDetailsList.data)}  />
         <DistributionDetailSection centre={selectedCentre.data} isConnectedUserResponsable={isConnectedUserResponsable(centreMembreDetailsList.data)} saveCentreDesc={saveCentreDesc} />
         <section>
@@ -501,97 +526,6 @@ function DistributionCard({centre}) {
   
 }
 
-function DistributionDetailSection({centre, isConnectedUserResponsable, saveCentreDesc}) {
-
-  const [state, setState] = useState({
-    editMode: false,
-    value: ""
-  });
-
-  useEffect(() => {
-
-    setState({
-      editMode: false,
-      value: centre.informations
-    })
-
-  }, [centre])
-
-  const handleTextValueChange = (event) => {
-    event.preventDefault();
-
-    setState({editMode: true, value: event.target.value});
-
-  }
-
-  const handleEditModeChange = (event) => {
-    event.preventDefault();
-
-    setState((previousState) => {
-      return {
-        ...previousState,
-        editMode : !previousState.editMode
-      }
-    })
-
-  }
-
-  const onUpdateSaveClick = (event) => {
-
-    event.preventDefault();
-
-    saveCentreDesc(state.value);
-
-  }
-
-  if(isConnectedUserResponsable) {
-
-    if(state.editMode) {
-
-      return (
-        <section className="desc-section">
-          <h1>Distribution à {capitalize(centre.nom)} le {centre.jour}</h1>
-          <form>
-            <textarea rows="10" value={state.value} onChange={handleTextValueChange} />
-            <div className="buttons-container">
-              <button onClick={onUpdateSaveClick} type="button" className="btn-animated primary">Enregistrer</button>
-              <button onClick={handleEditModeChange} type="button" className="btn-animated secondary">Annuler</button>
-            </div>
-          </form>
-        </section>
-      )
-
-      
-  
-    } else {
-  
-      return (
-        <section className="desc-section">
-          <h1>Distribution à {capitalize(centre.nom)} le {centre.jour}</h1>
-          <p>{state.value === "" ? 'Aucune information' : state.value }</p>
-          <div className="buttons-container">
-            <button onClick={handleEditModeChange} type="button" className="btn-animated primary">Modifier</button>
-          </div>
-        </section>
-      )
-  
-    }
-
-  } else {
-
-    return (
-      <section className="desc-section">
-        <h1>Distribution à {capitalize(centre.nom)} le {centre.jour}</h1>
-        <p>{state.value === "" ? 'Aucune information' : state.value }</p>
-      </section>
-    )
-
-  }
-
-  
-
-  
-}
 
 
 function RegisterBanner({connectedUser, onRegisterClick, adhesion, isConnectedUserMember}) {
@@ -599,7 +533,7 @@ function RegisterBanner({connectedUser, onRegisterClick, adhesion, isConnectedUs
   if(isConnectedUserMember) {
     return null;
   } else if(adhesion !== null && adhesion.utilisateur === connectedUser.uid) {
-    return <AlertBox type="info" message="Votre demande d'adhésion pour cette distribution est en attente de validation par un responsable." />
+    return <AlertBox error={{type: "info", message: "Votre demande d'adhésion pour cette distribution est en attente de validation par un responsable."}} />
   } else {
     return(
       <section className="register-banner" >
@@ -663,15 +597,7 @@ function ResponsableSection({membres}) {
 
   if(responsables.length > 0) {
     return (
-      <div className="user-list-container">
-        {
-          (responsables || []).map((responsable) => {
-  
-            return <UserItem key={responsable.uid} user={responsable} />;
-  
-          })
-        }
-      </div>
+      <UserList users={responsables} />
     )
   } else {
     return (
@@ -686,35 +612,13 @@ function ParticipantSection({membres}) {
 
   if(participants.length > 0) {
     return (
-      <div className="user-list-container">
-        {
-          (participants || []).map((participant) => {
-  
-            return <UserItem key={participant.uid} user={participant} />;
-  
-          })
-        }
-      </div>
+      <UserList users={participants} />
     )
   } else {
     return (
       <p>Aucun membre</p>
     )
   }
-}
-
-function UserItem({user}) {
-
-  const name = (user.prenom && user.nom) ? (user.prenom + ' ' + user.nom.substring(0,1) + '.') : 'Inconnu';
-
-  return (
-    <div className="item-user">
-      <div className="item-user-image">
-        <div className="item-user-image-content" style={{backgroundImage: `url(${user.profil_pic === '' ? process.env.PUBLIC_URL + '/img/profile.png' : user.profil_pic } )`}} ></div>
-      </div>
-      <div className="item-user-name"><p>{name}</p></div>
-    </div>
-  )
 }
 
 export default DistributionCard;

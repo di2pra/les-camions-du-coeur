@@ -1,6 +1,5 @@
 import React, {useState, useCallback} from 'react';
 import ErrorMsg from './../components/ErrorMsg';
-//import PageLoading from './../components/PageLoading';
 import useUpdateAccountForm from './../hooks/useUpdateAccountForm';
 
 function Profil() {

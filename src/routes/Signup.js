@@ -132,7 +132,7 @@ function Signup(props) {
       <div id="register-page" className="container-fluid">
         <div className="form-container-m">
           <div className="form">
-            <AlertBox type={data.error.type} message={data.error.message} />
+            <AlertBox error={data.error} />
             <form  onSubmit={handleOnSubmit}>
               <div className="form-group">
                 <label htmlFor="inputNom">Nom*</label>

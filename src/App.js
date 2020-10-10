@@ -6,6 +6,7 @@ import PageLoading from './components/PageLoading';
 import Home from './routes/Home';
 import {UserContext} from "./providers/UserProvider";
 
+//const Planning = lazy(() => import('./routes/Planning'));
 const Planning = lazy(() => import('./routes/Planning'));
 const Distribution = lazy(() => import('./routes/Distribution'));
 const Signup = lazy(() => import('./routes/Signup'));
@@ -36,8 +37,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={Home}/>
           <Route exact path="/distribution/:nom?/:jour?" render={() => (connectedUser.uid === "") ? <Redirect to="/connexion"/> : <Distribution />} />
-          <Route exact path="/planning" render={() => (connectedUser.uid === "") ? <Redirect to="/connexion"/> : <Planning reset={true} />} />
-          <Route exact path="/planning/:nom/:jour" render={() => (connectedUser.uid === "") ? <Redirect to="/connexion"/> : <Planning />} />
+          <Route exact path="/planning/:nom?/:jour?" render={() => (connectedUser.uid === "") ? <Redirect to="/connexion"/> : <Planning />} />
           <Route exact path="/compte" render={() => (connectedUser.uid === "") ? <Redirect to="/connexion"/> : <Compte/>} />
           <Route exact path="/sinscrire" render={() => (connectedUser.uid === "") ? <Signup/> : <Redirect to="/"/>}/>
           <Route exact path="/connexion" render={() => (connectedUser.uid === "") ? <Login/> : <Redirect to="/"/> }/>
