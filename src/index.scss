@@ -1068,3 +1068,51 @@ button:focus {
   }
 
 }
+
+
+.planning-item-container {
+  background-color: lighten($base-color, 50);
+  border-left: 5px solid $base-color;
+  border-radius: 5px;
+  padding: 10px;
+
+  section.header {
+
+    display: flex;
+    align-content: center;
+    align-items: center;
+    
+    .title {
+      flex-grow: 1;
+      h1 {
+        font-size: 1.5rem;
+        color: $base-color;
+        padding: 0px 15px 0px 10px;
+      }
+    
+      h2 {
+        font-size: 1rem;
+        color: $secondary-color;
+        padding: 0px 15px 0px 10px;
+      }
+    }
+  
+    .actions-container {
+      button {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        color: white;
+        background-color: green;
+        outline: none;
+        margin: 15px;
+  
+        .btn-icon {
+          width: 30px;
+          height: 30px;
+          margin: auto;
+        }
+      }
+    }
+  }
+}

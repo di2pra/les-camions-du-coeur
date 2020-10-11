@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
 import PlanningCard from '../components/PlanningCard';
 import { UserContext } from "../providers/UserProvider";
-import { firestore, firebaseApp } from "../Firebase";
 import PageLoading from '../components/PageLoading';
-import {daysGenerator, capitalize} from '../components/Helpers';
+import {capitalize} from '../components/Helpers';
 import { useHistory, useParams } from "react-router-dom";
 import AlertBox from '../components/AlertBox';
-
+import useFirestore from './../hooks/useFirestore';
 
 function Planning() {
 
@@ -22,160 +21,31 @@ function Planning() {
   const [selectedCentreDataIsLoading, setSelectedCentreDataIsLoading] = useState(null);
   const [selectedCentreMemberList, setSelectedCentreMemberList] = useState([]);
   const [selectedCentrePlanningList, setSelectedCentrePlanningList] = useState([]);
+  
 
+  const {
+    getUserCentreList,
+    getCentreMembreList,
+    getCentrePlanning
+  } = useFirestore();
 
-
-  const loadUserCentreList = useCallback(async () => {
-
-    let userCentres = [];
-
-    const membresRef = await firestore.collectionGroup("membres").where("utilisateur", "==", connectedUser.uid).get();
-
-    let centreIds = membresRef.docs.map((membreRef) => {
-      return membreRef.ref.parent.parent.id
-    });
-
-
-    if(centreIds.length>0) {
-
-      const centresRef = await firestore.collection("centres").where(firebaseApp.firestore.FieldPath.documentId(), "in", centreIds).get();
-
-      userCentres = centresRef.docs.map((centre) => {
-        return {...centre.data(), uid: centre.id}
-      });
-
-    }
-
-    return userCentres;
-
-
-  }, [connectedUser.uid])
-
-  const loadSelectedCentreMembers = useCallback(async (selectedCentreIndex) => {
-
-
-    let membreList = [], membreListDetails = [];
-    // retrieve membre id and type
-    const membresRef = await firestore.collection("centres").doc(userCentreList.data[selectedCentreIndex].uid).collection("membres").get();
-
-    membreList = membresRef.docs.map((doc) => {
-      return ({...doc.data()});
-    });
-
-
-    if(membreList.length > 0) {
-
-      let listUserIds = membreList.map((membre) => {return membre.utilisateur})
-      let i,j,temparray,chunk = 10;
-
-      for (i=0,j=listUserIds.length; i<j; i+=chunk) {
-        
-        temparray = listUserIds.slice(i,i+chunk);
-
-        const membreDetailsRef = await firestore.collection("utilisateurs").where(firebaseApp.firestore.FieldPath.documentId(), "in", temparray).get();
-    
-        membreDetailsRef.forEach((doc) => {
-
-          let membreType = membreList.find((membre) => {return membre.utilisateur === doc.id});
-
-          membreListDetails.push({
-            ...doc.data(), 
-            uid: doc.id,
-            type: membreType.type
-          })
-
-        });
-
-      }
-
-    }
-      
-
-    return membreListDetails;
-    
-
-  }, [userCentreList.data])
-
-  const loadSelectedCentrePlanning = useCallback(async (selectedCentreIndex) => {
-
-
-    let planningList = [];
-    const today = (new Date()).toISOString().split("T")[0];
-    let planningRef = await firestore.collection("centres").doc(userCentreList.data[selectedCentreIndex].uid).collection("distributions").where("date", ">=", today).orderBy("date").limit(5).get();
-
-
-    planningList = planningRef.docs.map((doc)  => {
-      return {...doc.data(), uid: doc.id}
-    });
-
-    if(planningRef.size < 5) {
-
-      let days = daysGenerator(userCentreList.data[selectedCentreIndex].jour);
-
-      for(var i =0; i< planningList.length; i++ ) {
-        for(var j= 0; j< days.length;j++) {
-          if (days[j] === planningList[i].date) {
-            days.splice(j,1);
-            break;
-          }
-        }
-      }
-
-      let distributionToCreate = days.map((value) => {
-        return {
-          date: value,
-          participants: []
-        }
-      });
-
-      
-
-      // Get a new write batch
-      var batch = firestore.batch();
-
-      distributionToCreate.forEach((dist) => {
-        var docToCreate = firestore.collection("centres").doc(userCentreList.data[selectedCentreIndex].uid).collection("distributions").doc();
-        batch.set(docToCreate, dist)
-      })
-
-
-      // Commit the batch
-      await batch.commit();
-
-      let planningRef = await firestore.collection("centres").doc(userCentreList.data[selectedCentreIndex].uid).collection("distributions").where("date", ">=", today).orderBy("date").limit(5).get();
-
-      planningList = planningRef.docs.map((doc)  => {
-        return {...doc.data(), uid: doc.id}
-      });
-
-    }
-
-    return planningList;
-
-
-  }, [userCentreList.data])
+  
 
 
   useEffect(() => {
 
     let isCancelled = false;
 
-    setUserCentreList((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: true,
-        data: []
-      }
+    setUserCentreList({
+      isProcessing: true,
+      data: []
     });
 
-    loadUserCentreList().then((centres) => {
+    getUserCentreList(connectedUser.uid).then((centres) => {
 
-      if(!isCancelled) setUserCentreList((prevState) => {
-        return {
-          ...prevState,
-          isProcessing: false,
-          data: centres
-        }
+      if(!isCancelled) setUserCentreList({
+        isProcessing: false,
+        data: centres
       })
 
     }).catch((error) => {
@@ -189,7 +59,7 @@ function Planning() {
       isCancelled = true
     }
 
-  }, [loadUserCentreList]);
+  }, [connectedUser.uid, getUserCentreList]);
 
 
   useEffect(() => {
@@ -241,52 +111,61 @@ function Planning() {
 
     let isCancelled = false;
 
-    if(selectedCentreIndex !== null) {
+    if(userCentreList.isProcessing === false) {
 
-      let loadingTerminated = [false, false];
-      setSelectedCentreDataIsLoading(true);
+      if(selectedCentreIndex !== null) {
+
+        let loadingTerminated = [false, false];
+        setSelectedCentreDataIsLoading(true);
   
-      loadSelectedCentreMembers(selectedCentreIndex).then((membres) => {
-
-        loadingTerminated[0] = true;
+    
+        getCentreMembreList(userCentreList.data[selectedCentreIndex].uid).then((membres) => {
   
-        if (!isCancelled) {
-
-          setSelectedCentreMemberList(membres);
-
-          if(!loadingTerminated.includes(false)) {
-            setSelectedCentreDataIsLoading(false);
+          loadingTerminated[0] = true;
+    
+          if (!isCancelled) {
+  
+            setSelectedCentreMemberList(membres);
+  
+            if(!loadingTerminated.includes(false)) {
+              setSelectedCentreDataIsLoading(false);
+            }
+  
+          } 
+    
+        }).catch((error) => {
+          if (!isCancelled) setError({
+            type: "error",
+            message: "Erreur lors du chargement des membres de la distribution : " + error.message
+          })
+        });
+    
+        getCentrePlanning(userCentreList.data[selectedCentreIndex]).then((planningList) => {
+  
+          loadingTerminated[1] = true;
+    
+          if (!isCancelled) {
+  
+            setSelectedCentrePlanningList(planningList);
+  
+            if(!loadingTerminated.includes(false)) {
+              setSelectedCentreDataIsLoading(false);
+            }
+  
           }
-
-        } 
+    
+        }).catch((error) => {
+          if (!isCancelled) setError({
+            type: "error",
+            message: "Erreur lors du chargement des plannings : " + error.message
+          })
+        });
   
-      }).catch((error) => {
-        if (!isCancelled) setError({
-          type: "error",
-          message: "Erreur lors du chargement des membres de la distribution : " + error.message
-        })
-      });
-  
-      loadSelectedCentrePlanning(selectedCentreIndex).then((planningList) => {
-
-        loadingTerminated[1] = true;
-  
-        if (!isCancelled) {
-
-          setSelectedCentrePlanningList(planningList);
-
-          if(!loadingTerminated.includes(false)) {
-            setSelectedCentreDataIsLoading(false);
-          }
-
+      } else {
+        if(userCentreList.data.length === 0) {
+          if (!isCancelled) setSelectedCentreDataIsLoading(false);
         }
-  
-      }).catch((error) => {
-        if (!isCancelled) setError({
-          type: "error",
-          message: "Erreur lors du chargement des plannings : " + error.message
-        })
-      });
+      }
 
     }
 
@@ -295,7 +174,9 @@ function Planning() {
       isCancelled = true
     }
 
-  }, [selectedCentreIndex, loadSelectedCentrePlanning, loadSelectedCentreMembers])
+    
+
+  }, [userCentreList, selectedCentreIndex, getCentreMembreList, getCentrePlanning])
 
 
 
@@ -315,7 +196,9 @@ function Planning() {
       </div>
     )
   } else if(userCentreList.isProcessing === null || userCentreList.isProcessing === true || selectedCentreDataIsLoading === null || selectedCentreDataIsLoading === true) {
+    
     return (<PageLoading />);
+  
   }  else {
     return (
       <div className="container-fluid container-80">

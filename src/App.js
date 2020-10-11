@@ -8,6 +8,7 @@ import {UserContext} from "./providers/UserProvider";
 
 //const Planning = lazy(() => import('./routes/Planning'));
 const Planning = lazy(() => import('./routes/Planning'));
+const NewPlanningCard = lazy(() => import('./routes/NewPlanningCard'));
 const Distribution = lazy(() => import('./routes/Distribution'));
 const Signup = lazy(() => import('./routes/Signup'));
 const Logout = lazy(() => import('./routes/Logout'));
@@ -36,6 +37,7 @@ function App() {
       <Suspense fallback={<PageLoading/>}>
         <Switch>
           <Route exact path="/" component={Home}/>
+          <Route exact path="/new" render={() => (connectedUser.uid === "") ? <Redirect to="/connexion"/> : <NewPlanningCard/>} />
           <Route exact path="/distribution/:nom?/:jour?" render={() => (connectedUser.uid === "") ? <Redirect to="/connexion"/> : <Distribution />} />
           <Route exact path="/planning/:nom?/:jour?" render={() => (connectedUser.uid === "") ? <Redirect to="/connexion"/> : <Planning />} />
           <Route exact path="/compte" render={() => (connectedUser.uid === "") ? <Redirect to="/connexion"/> : <Compte/>} />

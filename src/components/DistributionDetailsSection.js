@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {capitalize} from '../components/Helpers';
 
 
-function DistributionDetailSection({centre, isConnectedUserResponsable, saveCentreDesc}) {
+function DistributionDetailSection({centre, isConnectedUserResponsable, onSaveCentreDesc}) {
 
   const [state, setState] = useState({
     editMode: false,
@@ -41,7 +41,7 @@ function DistributionDetailSection({centre, isConnectedUserResponsable, saveCent
 
     event.preventDefault();
 
-    saveCentreDesc(state.value);
+    onSaveCentreDesc(state.value);
 
   }
 
@@ -69,7 +69,7 @@ function DistributionDetailSection({centre, isConnectedUserResponsable, saveCent
       return (
         <section className="desc-section">
           <h1>Distribution à {capitalize(centre.nom)} le {centre.jour}</h1>
-          <p>{state.value === "" ? 'Aucune information' : state.value }</p>
+          <p>{(state.value == null || state.value === "") ? 'Aucune information' : state.value }</p>
           <div className="buttons-container">
             <button onClick={handleEditModeChange} type="button" className="btn-animated primary">Modifier</button>
           </div>

@@ -1,11 +1,11 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams, useHistory } from 'react-router-dom';
-import { firestore } from "../Firebase";
 import PageLoading from '../components/PageLoading';
 import {PinIcon, CalendarIcon} from '../components/Icons';
 import {capitalize} from '../components/Helpers';
 import DistributionCard from '../components/DistributionCard';
 import AlertBox from '../components/AlertBox';
+import useFirestore from './../hooks/useFirestore';
 
 function Distribution() {
 
@@ -17,7 +17,12 @@ function Distribution() {
   const [centreList, setCentreList] = useState({isProcessing: null, data: []});
   const [selectedCentre, setSelectedCentre] = useState(null);
 
-  const loadCentreList = useCallback(async () => {
+  const {getCentreList} = useFirestore();
+
+
+  useEffect(() => {
+
+    let isCancelled = false;
 
     setCentreList((prevState) => {
       return {
@@ -27,73 +32,71 @@ function Distribution() {
       }
     });
 
-    let centres = [];
 
-    try {
+    getCentreList().then((centres) => {
 
-      const centresRef = await firestore.collection("centres").get();
+      if(!isCancelled) setCentreList((prevState) => {
+        return {
+          ...prevState,
+          isProcessing: false,
+          data: centres
+        }
+      })
 
-      centres = centresRef.docs.map((doc) => {
-        return ({...doc.data(), uid: doc.id});
-      });
-      
+    }).catch((error) => {
 
-    } catch (error) {
-
-      setError({
+      if(!isCancelled) setError({
         type: "error",
         message: "Erreur lors du chargement de la liste des distributions : " + error.message
       })
 
+    });
+
+    return () => {
+      isCancelled = true
     }
+    
 
-    setCentreList((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: false,
-        data: centres
-      }
-    })
+  }, [getCentreList]);
 
-  }, []);
 
   useEffect(() => {
 
-    if(centreList.isProcessing == null) {
-      loadCentreList(); 
-    }
+    if(centreList.isProcessing === false) {
 
-    if((jour == null || nom === null)) {
-      setSelectedCentre(null);
-    } else {
-      if(centreList.isProcessing === false) {
+      if((jour == null || nom === null)) {
 
-        let selectedCentre = centreList.data.find((centre) => {
-          return centre.nom === nom && centre.jour === jour
-        });
+        setSelectedCentre(null);
+        
+      } else {
   
-        if(selectedCentre == null) {
-          history.push("/distribution");
-        } else {
-          setSelectedCentre(selectedCentre);
-        }
+          let selectedCentre = centreList.data.find((centre) => {
+            return centre.nom === nom && centre.jour === jour
+          });
+    
+          if(selectedCentre == null) {
+            history.push("/distribution");
+          } else {
+            setSelectedCentre(selectedCentre);
+          }
+        
       }
-      
+
     }
+    
 
-  }, [jour, nom, history, centreList, selectedCentre, loadCentreList]);
+  }, [jour, nom, history, centreList])
 
 
-  if(centreList.isProcessing === true) {
-    return <PageLoading />;
-  } else if(error !== null) {
+  if(error !== null) {
     return (
       <div className="container-fluid container-80">
         <AlertBox error={error} />
       </div>
     )
+  } else if(centreList.isProcessing === true) {
+    return <PageLoading />;
   } else if(selectedCentre == null) {
-
     return (
       <div className="container-fluid">
         <div className="home-card-container">
@@ -105,7 +108,6 @@ function Distribution() {
         </div>
       </div>
     )
-
   } else if(selectedCentre !== null) {
     return <DistributionCard centre={selectedCentre}/>;
   } else {

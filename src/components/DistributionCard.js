@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useEffect, useContext } from 'react';
-import { firestore, firebaseApp } from "../Firebase";
+import { firestore } from "../Firebase";
 import PageLoading from '../components/PageLoading';
 import {UserContext} from "./../providers/UserProvider";
 import UserList from './UserList';
 import AlertBox from './AlertBox';
 import DistributionDetailSection from './DistributionDetailsSection';
+import useFirestore from './../hooks/useFirestore';
 
 function DistributionCard({centre}) {
 
@@ -12,10 +13,11 @@ function DistributionCard({centre}) {
   const {connectedUser} = useContext(UserContext);
 
   const [error, setError] = useState(null);
-  const [selectedCentre, setSelectedCentre] = useState({isProcessing: false, data: centre});
-  const [centreMembreDetailsList, setCentreMembreDetailsList] = useState({isProcessing: true, data: []});
-  const [centreDemandeAdhesionDetailsList, setCentreDemandeAdhesionDetailsList] = useState({isProcessing: false, data: []});
-  const [connectedUserAdhesionDetails, setConnectedUserAdhesionDetails] = useState({isProcessing: false, data: null});
+  const [isProcessing, setIsProcessing] = useState(true);
+  const [selectedCentre, setSelectedCentre] = useState(centre);
+  const [centreMembreDetailsList, setCentreMembreDetailsList] = useState([]);
+  const [centreDemandeAdhesionDetailsList, setCentreDemandeAdhesionDetailsList] = useState([]);
+  const [connectedUserAdhesionDetails, setConnectedUserAdhesionDetails] = useState(null);
   
 
   const isConnectedUserResponsable = useCallback((membres) => {
@@ -27,302 +29,114 @@ function DistributionCard({centre}) {
   }, [connectedUser.uid]);
 
 
-  const loadConnectedUserAdhesionDetails = useCallback(async (selectedCentreUid) => {
+  const {
+    getUserAdhesionDetails, 
+    getCentreDemandeAdhesionList, 
+    getCentreMembreList,
+    updateCentre,
+    setDemandeAdhesion,
+    deleteDemandeAdhesion
+  } = useFirestore();
+  
 
-    setConnectedUserAdhesionDetails((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: true,
-        data: null
-      }
-    })
-
-    let adhesionData = null;
-
-    try {
-
-      const adhesionRef = await firestore.collection("demandeAdhesion").where("centre", "==", selectedCentreUid).where("utilisateur", "==", connectedUser.uid).get();
-
-      if(!adhesionRef.empty) {
-
-        adhesionData = {...adhesionRef.docs[0].data(), uid: adhesionRef.docs[0].id}
-        
-      }
-      
-    } catch (error) {
-      setError({
-        type: "error",
-        message: "Erreur lors du chagement des informations d'adhesion : " + error.message
-      });
-    }
-
-
-    setConnectedUserAdhesionDetails((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: false,
-        data: adhesionData
-      }
-    })
-
-    
-
-  }, [connectedUser.uid]);
-
-  const loadCentreDemandeAdhesionDetails = useCallback(async (selectedCentreUid) => {
-
-    let demandeAdhesionList = [];
-    let demandeAdhesionDetailsList = [];
-
-    setCentreDemandeAdhesionDetailsList((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: true,
-        data: []
-      }
-    });
-      
-    try {
-
-      const demandeAdhesionListRef = await firestore.collection("demandeAdhesion").where("centre", "==", selectedCentreUid).get();
-      
-      demandeAdhesionList = demandeAdhesionListRef.docs.map((doc) => {
-        return ({...doc.data(), uid: doc.id});
-      });
-    
-    
-    } catch (error) {
-      setError({
-        type: "error",
-        message: error.message
-      })
-    }
-
-
-    if(demandeAdhesionList.length > 0) {
-
-      let listUserIds = demandeAdhesionList.map(adhesion => {return adhesion.utilisateur});
-
-      let i,j,temparray,chunk = 10;
-      for (i=0,j=listUserIds.length; i<j; i+=chunk) {
-        
-        temparray = listUserIds.slice(i,i+chunk);
-
-        try {
-
-          // retrieve users details of demande Adhesion
-          let demandeAdhesionuDetailsRef = await firestore.collection("utilisateurs").where(firebaseApp.firestore.FieldPath.documentId(), "in", temparray).get();
-
-          demandeAdhesionuDetailsRef.docs.forEach((doc) => {
-
-            let selectedUserDemandeAdhesion = demandeAdhesionList.find((demandeAdhesin) => { return (demandeAdhesin.utilisateur === doc.id)});
-
-            demandeAdhesionDetailsList.push({...doc.data(), utilisateurUid: doc.id, uid: selectedUserDemandeAdhesion.uid})
-          })
-          
-        } catch (error) {
-          setError({
-            type: "error",
-            message: error.message
-          })
-        }
-
-      }
-
-    }
-
-    setCentreDemandeAdhesionDetailsList((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: false,
-        data: demandeAdhesionDetailsList
-      }
-    });
-
-  }, []);
-
-  const loadCentreMembreDetails = useCallback(async (selectedCentreUid) => {
-
-
-    let membreList = [];
-    let membreDetailsList = [];
-
-    try {
-
-      // retrieve membres id and type
-      const membresRef = await firestore.collection("centres").doc(selectedCentreUid).collection("membres").get();
-
-      membreList = membresRef.docs.map((doc) => {
-        return ({...doc.data()});
-      });
-      
-    } catch (error) {
-
-      setError({
-        type: "error",
-        message: "Erreur lors du chagement des membres : " + error.message
-      })
-
-    }
-
-
-    // retrieve membre details
-
-    if(membreList.length > 0) {
-
-      let membreListIds = membreList.map((membre) => {return membre.utilisateur});
-
-      let i,j,temparray,chunk = 10;
-      for (i=0,j=membreListIds.length; i<j; i+=chunk) {
-        
-        temparray = membreListIds.slice(i,i+chunk);
-
-        try {
-
-          const membreDetailsRef = await firestore.collection("utilisateurs").where(firebaseApp.firestore.FieldPath.documentId(), "in", temparray).get();
-    
-          membreDetailsRef.forEach((doc) => {
-
-            let membreType = membreList.find((membre) => {return membre.utilisateur === doc.id});
-
-            membreDetailsList.push({
-              ...doc.data(), 
-              uid: doc.id,
-              type: membreType.type
-            })
-
-          });
-          
-        } catch (error) {
-          setError({
-            type: "error",
-            message: "Erreur lors du chagement des membres : " + error.message
-          })
-        }
-        
-
-      }
-    }
-
-    
-
-    return membreDetailsList;
-
-  }, []);
+  
 
   useEffect(() => {
 
-    setCentreMembreDetailsList((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: true,
-        data: []
-      }
-    });
+    let isCancelled = false;
 
-    loadCentreMembreDetails(centre.uid).then((membreList) => {
+    setIsProcessing(true);
+
+    getCentreMembreList(centre.uid).then((membreList) => {
+
+      if(!isCancelled) setCentreMembreDetailsList(membreList);
 
       if(isConnectedUserMember(membreList)) {
 
         if(isConnectedUserResponsable(membreList)) {
-          loadCentreDemandeAdhesionDetails(centre.uid).then(() => {
 
-            setCentreMembreDetailsList((prevState) => {
-              return {
-                ...prevState,
-                isProcessing: false,
-                data: membreList
-              }
+          getCentreDemandeAdhesionList(centre.uid).then((demandeAdhesionList) => {
+
+            if(!isCancelled) setCentreDemandeAdhesionDetailsList(demandeAdhesionList);
+            if(!isCancelled) setIsProcessing(false);
+
+          }).catch((error) => {
+
+            if(!isCancelled) setError({
+              type: "error",
+              message: "Erreur lors du chagement des demandes d'adhésion : " + error.message
             });
 
           });
+
         } else {
-
-          setCentreMembreDetailsList((prevState) => {
-            return {
-              ...prevState,
-              isProcessing: false,
-              data: membreList
-            }
-          });
-
+          if(!isCancelled) setIsProcessing(false);
         }
 
       } else {
 
-        loadConnectedUserAdhesionDetails(centre.uid).then(() => {
-          setCentreMembreDetailsList((prevState) => {
-            return {
-              ...prevState,
-              isProcessing: false,
-              data: membreList
-            }
+        getUserAdhesionDetails(centre.uid, connectedUser.uid).then((adhesionData) => {
+
+          if(!isCancelled) setConnectedUserAdhesionDetails(adhesionData);
+          if(!isCancelled) setIsProcessing(false);
+
+        }).catch((error) => {
+
+          if(!isCancelled) setError({
+            type: "error",
+            message: "Erreur lors du chagement des informations d'adhésion de l'utilisateur connectée : " + error.message
           });
-        });
+
+        })
       }
 
-      
+
+    }).catch((error) => {
+
+      if(!isCancelled) setError({
+        type: "error",
+        message: "Erreur lors du chagement des membres : " + error.message
+      })
 
     });
 
     
+    return () => {
+      isCancelled = true
+    }
 
 
-  }, [centre.uid, loadCentreMembreDetails, isConnectedUserMember, isConnectedUserResponsable, loadCentreDemandeAdhesionDetails, loadConnectedUserAdhesionDetails]);
+  }, [connectedUser.uid, centre.uid, getCentreMembreList, isConnectedUserMember, isConnectedUserResponsable, getCentreDemandeAdhesionList, getUserAdhesionDetails]);
 
 
 
-  const onRegisterClick = (e) => {
+  const onRegisterClick = useCallback((e) => {
+
     e.preventDefault();
 
-    saveRegisterCentre();
+    setIsProcessing(true);
 
-  }
+    setDemandeAdhesion({
+      centre: centre.uid,
+      utilisateur: connectedUser.uid
+    }).then((demandeAdhesion) => {
 
-  const saveRegisterCentre = useCallback(async () => {
+      setConnectedUserAdhesionDetails(demandeAdhesion);
+      setIsProcessing(false);
 
+    }).catch((error) => {
 
-    setConnectedUserAdhesionDetails((prevState) => {
-      return {
-        ...prevState, 
-        isProcessing: true
-      }
-    });
-
-    let demandeAdhesion = null;
-
-
-    try {
-
-      let demandeAdhesionRef = await firestore.collection('demandeAdhesion').add({
-        centre: centre.uid,
-        utilisateur: connectedUser.uid
-      });
-
-      demandeAdhesion = {centre: centre.uid, utilisateur: connectedUser.uid, uid: demandeAdhesionRef.id};
-
-
-    } catch (error) {
       setError({
         type: "error",
         message: "Erreur lors de votre demande d'adhésion : " + error.message
       });
-    }
 
-    setConnectedUserAdhesionDetails((prevState) => {
-      return {
-        ...prevState, 
-        isProcessing: false,
-        data: demandeAdhesion
-      }
-    });
-    
+    })
 
-  }, [setConnectedUserAdhesionDetails, connectedUser.uid, centre.uid])
+  }, [setDemandeAdhesion, connectedUser.uid, centre.uid]);
+
 
   const saveAcceptAdhesion = useCallback(async (adhesion) => {
-
-    
 
     // Get a new write batch
     var batch = firestore.batch();
@@ -355,11 +169,11 @@ function DistributionCard({centre}) {
 
       await batch.commit();
 
-      loadCentreMembreDetails(centre.uid).then((membreList) => {
+      getCentreMembreList(centre.uid).then((membreList) => {
 
         if(isConnectedUserResponsable(membreList)) {
 
-          loadCentreDemandeAdhesionDetails(centre.uid).then(() => {
+          getCentreDemandeAdhesionList(centre.uid).then(() => {
             setCentreMembreDetailsList((prevState) => {
               return {
                 ...prevState,
@@ -403,121 +217,96 @@ function DistributionCard({centre}) {
     
     
 
-  }, [centre.uid, isConnectedUserResponsable, loadCentreMembreDetails, loadCentreDemandeAdhesionDetails]);
+  }, [centre.uid, isConnectedUserResponsable, getCentreMembreList, getCentreDemandeAdhesionList]);
 
 
   const saveDeclineAdhesion = useCallback(async (adhesion) => {
-    
-    setCentreDemandeAdhesionDetailsList((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: true
-      }
-    });
 
-    try {
+    setIsProcessing(true);
 
-      // delete demande adhésion
-      await firestore.collection("demandeAdhesion").doc(adhesion.uid).delete();
+    deleteDemandeAdhesion(adhesion.uid).then(() => {
 
-      if(isConnectedUserResponsable(centreMembreDetailsList.data)) {
-        loadCentreDemandeAdhesionDetails(centre.uid);
+      if(isConnectedUserResponsable(centreMembreDetailsList)) {
+
+        getCentreDemandeAdhesionList(centre.uid).then((demandeAdhesionList) => {
+
+          setCentreDemandeAdhesionDetailsList(demandeAdhesionList);
+          setIsProcessing(false);
+
+        }).catch((error) => {
+
+          setError({
+            type: "error",
+            message: "Erreur lors du refus d'une demande d'adhésion : " + error.message
+          });
+
+        });
+
       } else {
-        setCentreDemandeAdhesionDetailsList((prevState) => {
-          return {
-            ...prevState,
-            isProcessing: false
-          }
-        })
+
+        setIsProcessing(false);
+
       }
 
-    } catch (error) {
+
+    }).catch((error) => {
 
       setError({
         type: "error",
         message: "Erreur lors du refus d'une demande d'adhésion : " + error.message
       });
 
-      setCentreDemandeAdhesionDetailsList((prevState) => {
-        return {
-          ...prevState,
-          isProcessing: false
-        }
-      });
-
-    }
-
-    
-
-    
-    
-
-  }, [centreMembreDetailsList.data, centre.uid, isConnectedUserResponsable, loadCentreDemandeAdhesionDetails]);
-
-
-  const saveCentreDesc = useCallback(async (descValue) => {
-
-    setSelectedCentre((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: true,
-        data: null
-      }
     });
+    
 
-    let newCentreData = null;
+  }, [centreMembreDetailsList, centre.uid, isConnectedUserResponsable, deleteDemandeAdhesion, getCentreDemandeAdhesionList]);
 
-    try {
 
-      await firestore.collection("centres").doc(centre.uid).update({informations: descValue});
 
-      let centreRef = await firestore.collection("centres").doc(centre.uid).get();
 
-      newCentreData = {...centreRef.data(), uid: centreRef.id};
+  const onSaveCentreDesc = useCallback((descValue) => {
 
-    } catch (error) {
+    setIsProcessing(true);
+
+    updateCentre({...selectedCentre, informations: descValue}).then((newCentre) => {
+
+      setSelectedCentre(newCentre);
+      setIsProcessing(false);
+
+    }).catch((error) => {
 
       setError({
         type: "error",
         message: "Erreur lors de la mise à jour de la description de la distribution : " + error.message
       });
 
-    }
+    })
 
-    setSelectedCentre((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: false,
-        data: newCentreData
-      }
-    });
-    
-
-  }, [centre.uid]);
+  }, [selectedCentre, updateCentre]);
 
 
-  if([selectedCentre.isProcessing, centreMembreDetailsList.isProcessing, centreDemandeAdhesionDetailsList.isProcessing, connectedUserAdhesionDetails.isProcessing].includes(true)) {
-    return <PageLoading />;
-  } else if(error !== null) {
+  if(error !== null) {
     return (
       <div id="distribution-details" className="container-fluid container-80">
         <AlertBox error={error} />
       </div>
     )
+  } else if(isProcessing) {
+    return <PageLoading />;
   } else {
     return (
       <div id="distribution-details" className="container-fluid container-80">
-        <RegisterBanner adhesion={connectedUserAdhesionDetails.data} connectedUser={connectedUser} onRegisterClick={onRegisterClick} isConnectedUserMember={isConnectedUserMember(centreMembreDetailsList.data)}  />
-        <DistributionDetailSection centre={selectedCentre.data} isConnectedUserResponsable={isConnectedUserResponsable(centreMembreDetailsList.data)} saveCentreDesc={saveCentreDesc} />
+        <RegisterBanner adhesion={connectedUserAdhesionDetails} connectedUser={connectedUser} onRegisterClick={onRegisterClick} isConnectedUserMember={isConnectedUserMember(centreMembreDetailsList)}  />
+        <DistributionDetailSection centre={selectedCentre} isConnectedUserResponsable={isConnectedUserResponsable(centreMembreDetailsList)} onSaveCentreDesc={onSaveCentreDesc} />
         <section>
           <h1>Responsable(s)</h1>
-          <ResponsableSection membres={centreMembreDetailsList.data} />
+          <ResponsableSection membres={centreMembreDetailsList} />
         </section>
         <section>
           <h1>Membre(s)</h1>
-          <ParticipantSection membres={centreMembreDetailsList.data} />
+          <ParticipantSection membres={centreMembreDetailsList} />
         </section>
-        <DemandeAdhesion saveDeclineAdhesion={saveDeclineAdhesion} saveAcceptAdhesion={saveAcceptAdhesion} demandeAdhesionList={centreDemandeAdhesionDetailsList.data} isConnectedUserResponsable={isConnectedUserResponsable(centreMembreDetailsList.data)} />
+        <DemandeAdhesion saveDeclineAdhesion={saveDeclineAdhesion} saveAcceptAdhesion={saveAcceptAdhesion} demandeAdhesionList={centreDemandeAdhesionDetailsList} isConnectedUserResponsable={isConnectedUserResponsable(centreMembreDetailsList)} />
       </div>
     );
   }

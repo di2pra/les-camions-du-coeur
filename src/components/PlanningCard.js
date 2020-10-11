@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { firestore, firebaseApp } from "../Firebase";
 import {LoadingIcon} from './Icons';
-import {capitalize, delay} from '../components/Helpers';
+import {capitalize} from '../components/Helpers';
 import UserList from '../components/UserList';
 import AlertBox from './AlertBox';
+import useFirestore from './../hooks/useFirestore';
 
 function PlanningCard({planning, connectedUser, centre, membres}) {
 
@@ -11,15 +11,11 @@ function PlanningCard({planning, connectedUser, centre, membres}) {
   const [distribution, setDistributionData] = useState({isProcessing: false, data: planning});
   const [participantList, setParticipantList] = useState([]);
 
-  const onUpdateClick = (event) => {
+  const {updateDistributionParticipant} = useFirestore();
+
+  const onUpdateClick = useCallback((event) => {
 
     event.preventDefault();
-
-    updateDistribution();
-    
-  }
-
-  const updateDistribution = useCallback(async () => {
 
     setDistributionData((prevState) => {
       return {
@@ -28,49 +24,26 @@ function PlanningCard({planning, connectedUser, centre, membres}) {
       }
     });
 
-    let distributionId = distribution.data.uid;
-    let newDistributionData = distribution.data;
+    updateDistributionParticipant(centre.uid, connectedUser.uid, distribution.data.uid, distribution.data.participants).then((distribution) => {
 
-    try {
+      setDistributionData((prevState) => {
+        return {
+          ...prevState,
+          isProcessing: false,
+          data: distribution
+        }
+      });
 
-      // if the user is already registered, then remove him
-      if(((distribution.data.participants || []).includes(connectedUser.uid))) {
-        await firestore.collection("centres").doc(centre.uid).collection("distributions").doc(distribution.data.uid).update({
-          participants: firebaseApp.firestore.FieldValue.arrayRemove(connectedUser.uid)
-        });
-
-      // else add him
-      } else {
-        await firestore.collection("centres").doc(centre.uid).collection("distributions").doc(distribution.data.uid).update({
-          participants: firebaseApp.firestore.FieldValue.arrayUnion(connectedUser.uid)
-        });
-      }
-      
-
-      const distributionRef = await firestore.collection("centres").doc(centre.uid).collection("distributions").doc(distributionId).get();
-
-      newDistributionData = {...distributionRef.data(), uid: distributionRef.id}
-
-    } catch (error) {
+    }).catch((error) => {
 
       setError({
         type: "error",
         message: "Erreur lors de la mise à jour de la distribution : " + error.message
       });
 
-    }
-
-    setDistributionData((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: false,
-        data: newDistributionData
-      }
     });
-
     
-
-  }, [distribution.data, centre.uid, connectedUser.uid]);
+  }, [updateDistributionParticipant, centre.uid, connectedUser.uid, distribution.data.uid, distribution.data.participants]);
 
 
   useEffect(() => {
@@ -86,6 +59,9 @@ function PlanningCard({planning, connectedUser, centre, membres}) {
     setParticipantList(participantDetails);
 
   }, [distribution.data, membres])
+
+
+
 
   return(
     <div className="planning-card-container">
@@ -130,18 +106,18 @@ function CardHeader({distribution, connectedUser, onUpdateClick, centre}) {
 
 function CardBody({distribution, participantList, error}) {
 
-  if(distribution.isProcessing) {
+  if(error !== null) {
+    return (
+      <div className="planning-card-body">
+        <AlertBox error={error}/>
+      </div>
+    )
+  } else if(distribution.isProcessing) {
     return (
       <div className="planning-card-body">
         <div className="loading-container">
           <LoadingIcon/>
         </div>
-      </div>
-    )
-  } else if(error !== null) {
-    return (
-      <div className="planning-card-body">
-        <AlertBox error={error}/>
       </div>
     )
   } else if(distribution.data.participants.length === 0) {
