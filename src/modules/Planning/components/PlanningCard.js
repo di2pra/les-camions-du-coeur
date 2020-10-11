@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import {LoadingIcon} from './Icons';
-import {capitalize} from '../components/Helpers';
-import UserList from '../components/UserList';
-import AlertBox from './AlertBox';
-import useFirestore from './../hooks/useFirestore';
+import {capitalize} from '../../../components/Helpers';
+import UserList from '../../User/components/UserList';
+import AlertBox from '../../../components/AlertBox';
+import useFirestore from '../../../hooks/useFirestore';
+import {LoadingIcon} from '../../../components/Icons';
 
 function PlanningCard({planning, connectedUser, centre, membres}) {
 

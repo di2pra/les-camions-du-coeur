@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {capitalize} from '../components/Helpers';
+import {capitalize} from '../../../components/Helpers';
 
 
 function DistributionDetailSection({centre, isConnectedUserResponsable, onSaveCentreDesc}) {
