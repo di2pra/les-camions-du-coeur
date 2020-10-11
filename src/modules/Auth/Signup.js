@@ -1,10 +1,10 @@
 import React, {useState, useCallback, useContext} from 'react';
-import AlertBox from '../components/AlertBox';
-import PageLoading from './../components/PageLoading';
-import useFormValidation from './../hooks/useFormValidation';
-import { UserContext } from "./../providers/UserProvider";
-import useFireAuth from '../hooks/useFireAuth';
-import useFirestore from '../hooks/useFirestore';
+import AlertBox from '../../components/AlertBox';
+import PageLoading from '../../components/PageLoading';
+import useFormValidation from '../../hooks/useFormValidation';
+import { UserContext } from "../../providers/UserProvider";
+import useFireAuth from '../../hooks/useFireAuth';
+import useFirestore from '../../hooks/useFirestore';
 
 function Signup() {
 

@@ -1,9 +1,9 @@
 import React, {useState, useCallback} from 'react';
 import { useHistory } from 'react-router-dom';
-import { auth } from './../Firebase';
-import AlertBox from '../components/AlertBox';
-import PageLoading from './../components/PageLoading';
-import useFormValidation from '../hooks/useFormValidation';
+import { auth } from '../../Firebase';
+import AlertBox from '../../components/AlertBox';
+import PageLoading from '../../components/PageLoading';
+import useFormValidation from '../../hooks/useFormValidation';
 
 function ResetPassword() {
 

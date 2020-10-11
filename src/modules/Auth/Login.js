@@ -1,9 +1,9 @@
 import React, {useState, useCallback} from 'react';
 import { useHistory } from 'react-router-dom';
-import AlertBox from '../components/AlertBox';
-import PageLoading from './../components/PageLoading';
-import useFormValidation from '../hooks/useFormValidation';
-import useFireAuth from '../hooks/useFireAuth';
+import AlertBox from '../../components/AlertBox';
+import PageLoading from './../../components/PageLoading';
+import useFormValidation from '../../hooks/useFormValidation';
+import useFireAuth from '../../hooks/useFireAuth';
 
 function Login() {
 
