@@ -1,6 +1,14 @@
 import { useCallback } from 'react';
+
 import { firestore, firebaseApp } from "../Firebase";
-import {daysGenerator} from "./../components/Helpers";
+import {daysGenerator} from "../components/Helpers";
+import {
+  CentreDeDistribution,
+  DemandeAdhesion,
+  DemandeAdhesionDetail,
+} from "../routes/Distribution/types";
+import { Member, MemberDetails, UserCentre } from "../routes/Membership/types";
+import { Planning } from '../routes/Planning/types';
 
 function useFirestore() {
 
@@ -18,19 +26,19 @@ function useFirestore() {
 
   const getCentreDemandeAdhesionList = useCallback(async (centreUid) => {
 
-    let demandeAdhesionList = [];
-    let demandeAdhesionDetailsList = [];
+    let demandeAdhesionList: DemandeAdhesion[] = [];
+    let demandeAdhesionDetailsList: DemandeAdhesionDetail[] = [];
       
 
     const demandeAdhesionListRef = await firestore.collection("demandeAdhesion").where("centre", "==", centreUid).get();
     
     demandeAdhesionList = demandeAdhesionListRef.docs.map((doc) => {
-      return ({...doc.data(), uid: doc.id});
+      return { ...doc.data(), uid: doc.id } as DemandeAdhesion;
     });
 
     if(demandeAdhesionList.length > 0) {
 
-      let listUserIds = demandeAdhesionList.map(adhesion => {return adhesion.utilisateur});
+      const listUserIds = demandeAdhesionList.map(adhesion => {return adhesion.utilisateur});
 
       let i,j,temparray,chunk = 10;
       for (i=0,j=listUserIds.length; i<j; i+=chunk) {
@@ -38,13 +46,19 @@ function useFirestore() {
         temparray = listUserIds.slice(i,i+chunk);
 
         // retrieve users details of demande Adhesion
-        let demandeAdhesionuDetailsRef = await firestore.collection("utilisateurs").where(firebaseApp.firestore.FieldPath.documentId(), "in", temparray).get();
+        const demandeAdhesionuDetailsRef = await firestore.collection("utilisateurs").where(firebaseApp.firestore.FieldPath.documentId(), "in", temparray).get();
 
         demandeAdhesionuDetailsRef.docs.forEach((doc) => {
 
-          let selectedUserDemandeAdhesion = demandeAdhesionList.find((demandeAdhesin) => { return (demandeAdhesin.utilisateur === doc.id)});
+          const selectedUserDemandeAdhesion = demandeAdhesionList.find((demandeAdhesin) => { return (demandeAdhesin.utilisateur === doc.id)});
 
-          demandeAdhesionDetailsList.push({...doc.data(), utilisateurUid: doc.id, uid: selectedUserDemandeAdhesion.uid})
+          if (selectedUserDemandeAdhesion) {
+            demandeAdhesionDetailsList.push({
+              ...doc.data(),
+              utilisateurUid: doc.id,
+              uid: selectedUserDemandeAdhesion.uid,
+            } as DemandeAdhesionDetail);
+          }
         })
 
       }
@@ -56,23 +70,19 @@ function useFirestore() {
   }, []);
 
   const getCentreMembreList = useCallback(async (centreUid) => {
-
-    let membreList = [];
-    let membreDetailsList = [];
+    let membreList: Member[] = [];
+    let membreDetailsList: MemberDetails[] = [];
 
     // retrieve membres id and type
     const membresRef = await firestore.collection("centres").doc(centreUid).collection("membres").get();
 
     membreList = membresRef.docs.map((doc) => {
-      return ({...doc.data()});
+      return ({...doc.data()} as Member);
     });
 
-
     // retrieve membre details
-
     if(membreList.length > 0) {
-
-      let membreListIds = membreList.map((membre) => {return membre.utilisateur});
+      const membreListIds = membreList.map((membre) => {return membre.utilisateur});
 
       let i,j,temparray,chunk = 10;
       for (i=0,j=membreListIds.length; i<j; i+=chunk) {
@@ -82,65 +92,60 @@ function useFirestore() {
         const membreDetailsRef = await firestore.collection("utilisateurs").where(firebaseApp.firestore.FieldPath.documentId(), "in", temparray).get();
     
         membreDetailsRef.forEach((doc) => {
+          const membreType = membreList.find((membre) => {
+            return membre.utilisateur === doc.id;
+          });
 
-          let membreType = membreList.find((membre) => {return membre.utilisateur === doc.id});
-
-          membreDetailsList.push({
-            ...doc.data(), 
-            uid: doc.id,
-            type: membreType.type
-          })
-
+          if (membreType) {
+            membreDetailsList.push({
+              ...doc.data(),
+              uid: doc.id,
+              type: membreType.type,
+            } as MemberDetails);
+          }
         });
-        
-
       }
     }
 
     return membreDetailsList;
-
   }, []);
 
   const getUserCentreList = useCallback(async (userUid) => {
-
-    let userCentres = [];
+    let userCentres: UserCentre[] = [];
 
     const membresRef = await firestore.collectionGroup("membres").where("utilisateur", "==", userUid).get();
 
-    let centreIds = membresRef.docs.map((membreRef) => {
-      return membreRef.ref.parent.parent.id
+    const centreIds = membresRef.docs.map((membreRef) => {
+      return membreRef.ref.parent.parent?.id || ''
     });
 
-
     if(centreIds.length>0) {
-
       const centresRef = await firestore.collection("centres").where(firebaseApp.firestore.FieldPath.documentId(), "in", centreIds).get();
 
       userCentres = centresRef.docs.map((centre) => {
         return {...centre.data(), uid: centre.id}
       });
-
     }
 
     return userCentres;
-
-
   }, [])
 
   const getCentrePlanning = useCallback(async (centre) => {
-
-
-    let planningList = [];
     const today = (new Date()).toISOString().split("T")[0];
-    let planningRef = await firestore.collection("centres").doc(centre.uid).collection("distributions").where("date", ">=", today).orderBy("date").limit(5).get();
+    let planningRef = await firestore.collection("centres")
+      .doc(centre.uid)
+      .collection("distributions")
+      .where("date", ">=", today)
+      .orderBy("date")
+      .limit(5)
+      .get();
 
-
+    let planningList: Planning[] = [];
     planningList = planningRef.docs.map((doc)  => {
-      return {...doc.data(), uid: doc.id}
+      return { ...doc.data(), uid: doc.id } as Planning;
     });
 
     if(planningRef.size < 5) {
-
       let days = daysGenerator(centre.jour);
 
       for(var i =0; i< planningList.length; i++ ) {
@@ -159,8 +164,6 @@ function useFirestore() {
         }
       });
 
-      
-
       // Get a new write batch
       var batch = firestore.batch();
 
@@ -169,21 +172,17 @@ function useFirestore() {
         batch.set(docToCreate, dist)
       })
 
-
       // Commit the batch
       await batch.commit();
 
       let planningRef = await firestore.collection("centres").doc(centre.uid).collection("distributions").where("date", ">=", today).orderBy("date").limit(5).get();
 
       planningList = planningRef.docs.map((doc)  => {
-        return {...doc.data(), uid: doc.id}
+        return { ...doc.data(), uid: doc.id } as Planning;
       });
-
     }
 
     return planningList;
-
-
   }, []);
 
   const getCentreList = useCallback(async () => {
@@ -191,7 +190,7 @@ function useFirestore() {
     const centresRef = await firestore.collection("centres").get();
 
     return centresRef.docs.map((doc) => {
-      return ({...doc.data(), uid: doc.id});
+      return { ...doc.data(), uid: doc.id } as CentreDeDistribution;
     });
 
   }, []);
