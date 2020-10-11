@@ -1,5 +1,5 @@
 import React from 'react';
-import {PlusIcon} from '../components/Icons';
+import {PlusIcon} from '../../components/Icons';
 
 function PageLoading () {
 

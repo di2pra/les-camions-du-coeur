@@ -6,9 +6,9 @@ import {
   CentreDeDistribution,
   DemandeAdhesion,
   DemandeAdhesionDetail,
-} from "../routes/Distribution/types";
-import { Member, MemberDetails, UserCentre } from "../routes/Membership/types";
-import { Planning } from '../routes/Planning/types';
+} from "../modules/Distribution/types";
+import { Member, MemberDetails, UserCentre } from "../modules/Membership/types";
+import { Planning } from '../modules/Planning/types';
 
 function useFirestore() {
 

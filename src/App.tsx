@@ -3,19 +3,18 @@ import React, {  Suspense, lazy, useContext } from 'react';
 
 import Navbar from './components/Navbar';
 import PageLoading from './components/PageLoading';
-import Home from './routes/Home';
+import Home from './modules/Home';
 import {UserContext} from "./providers/UserProvider";
 
-//const Planning = lazy(() => import('./routes/Planning'));
-const Planning = lazy(() => import('./routes/Planning'));
-const NewPlanningCard = lazy(() => import('./routes/NewPlanningCard'));
-const Distribution = lazy(() => import('./routes/Distribution'));
-const Signup = lazy(() => import('./routes/Signup'));
-const Logout = lazy(() => import('./routes/Logout'));
-const Login = lazy(() => import('./routes/Login'));
-const Compte = lazy(() => import('./routes/Compte'));
-const ResetPassword = lazy(() => import('./routes/ResetPassword'));
-const PageNotFound = lazy(() => import('./routes/PageNotFound'));
+const Planning = lazy(() => import('./modules/Planning'));
+const NewPlanningCard = lazy(() => import('./modules/Planning/NewPlanningCard'));
+const Distribution = lazy(() => import('./modules/Distribution'));
+const Signup = lazy(() => import('./modules/Auth/Signup'));
+const Logout = lazy(() => import('./modules/Auth/Logout'));
+const Login = lazy(() => import('./modules/Auth/Login'));
+const Compte = lazy(() => import('./modules/Compte'));
+const ResetPassword = lazy(() => import('./modules/Auth/ResetPassword'));
+const PageNotFound = lazy(() => import('./modules/PageNotFound'));
 
 /*function slowImport(value, ms = 5000) {
   return new Promise(resolve => {
@@ -23,16 +22,12 @@ const PageNotFound = lazy(() => import('./routes/PageNotFound'));
   });
 }*/
 
-
-
-
-
 function App() {
-
   const {connectedUser} = useContext(UserContext);
 
+  // TODO: Di2pra si t'as des bugs en rapport avec les redirections, remets initialPath au lieu de  basename
   return (
-    <Router initialPath="/">
+    <Router basename="/">
       <Navbar />
       <Suspense fallback={<PageLoading/>}>
         <Switch>
@@ -50,7 +45,6 @@ function App() {
       </Suspense>
     </Router>
   )
-
 };
 
 export default App;

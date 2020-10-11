@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
-import { auth } from "../Firebase";
-import PageLoading from '../components/PageLoading';
+import { auth } from "../../Firebase";
+import PageLoading from '../../components/PageLoading';
 
 
 function Logout(props) {

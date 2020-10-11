@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
-import PlanningCard from '../components/PlanningCard';
-import { UserContext } from "../providers/UserProvider";
-import PageLoading from '../components/PageLoading';
-import {capitalize} from '../components/Helpers';
 import { useHistory, useParams } from "react-router-dom";
-import AlertBox from '../components/AlertBox';
-import useFirestore from './../hooks/useFirestore';
+
+import PlanningCard from './components/PlanningCard';
+import { UserContext } from "../../providers/UserProvider";
+import PageLoading from '../../components/PageLoading';
+import {capitalize} from '../../components/Helpers';
+import AlertBox from '../../components/AlertBox';
+import useFirestore from '../../hooks/useFirestore';
 
 function Planning() {
 

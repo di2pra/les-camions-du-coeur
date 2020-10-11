@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 
 import PageLoading from "../../components/PageLoading";
-import DistributionCard from "../../components/DistributionCard";
 import AlertBox from "../../components/AlertBox";
-import useFirestore from "./../../hooks/useFirestore";
+import useFirestore from "../../hooks/useFirestore";
+import { Error } from "../../types/Error";
 
+import DistributionCard from "./components/DistributionCard";
 import CentreItem from "./components/CentreItem";
 import { CentreDeDistribution } from "./types";
-import { Error } from "../../types/Error";
 
 function Distribution() {
   const { nom, jour } = useParams();

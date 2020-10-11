@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useEffect, useContext } from 'react';
-import { firestore } from "../Firebase";
-import PageLoading from '../components/PageLoading';
-import {UserContext} from "./../providers/UserProvider";
-import UserList from './UserList';
-import AlertBox from './AlertBox';
+
+import { firestore } from "../../../Firebase";
+import PageLoading from '../../../components/PageLoading';
+import {UserContext} from "../../../providers/UserProvider";
+import UserList from '../../User/components/UserList';
+import AlertBox from '../../../components/AlertBox';
 import DistributionDetailSection from './DistributionDetailsSection';
-import useFirestore from './../hooks/useFirestore';
+import useFirestore from '../../../hooks/useFirestore';
 
 function DistributionCard({centre}) {
 
