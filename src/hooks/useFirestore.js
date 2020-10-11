@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { firestore, firebaseApp } from "../Firebase";
-import {daysGenerator, delay} from "./../components/Helpers";
+import {daysGenerator} from "./../components/Helpers";
 
 function useFirestore() {
 
