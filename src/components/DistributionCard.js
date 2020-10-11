@@ -34,7 +34,7 @@ function DistributionCard({centre}) {
     getCentreDemandeAdhesionList, 
     getCentreMembreList,
     updateCentre,
-    setDemandeAdhesion,
+    createDemandeAdhesion,
     deleteDemandeAdhesion
   } = useFirestore();
   
@@ -116,7 +116,7 @@ function DistributionCard({centre}) {
 
     setIsProcessing(true);
 
-    setDemandeAdhesion({
+    createDemandeAdhesion({
       centre: centre.uid,
       utilisateur: connectedUser.uid
     }).then((demandeAdhesion) => {
@@ -133,7 +133,7 @@ function DistributionCard({centre}) {
 
     })
 
-  }, [setDemandeAdhesion, connectedUser.uid, centre.uid]);
+  }, [createDemandeAdhesion, connectedUser.uid, centre.uid]);
 
 
   const saveAcceptAdhesion = useCallback(async (adhesion) => {

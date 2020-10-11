@@ -1,46 +1,36 @@
 import React, {useState, useCallback} from 'react';
-import { auth } from '../Firebase';
 import AlertBox from './AlertBox';
 import PageLoading from './PageLoading';
 import useFormValidation from '../hooks/useFormValidation';
+import useFireAuth from '../hooks/useFireAuth';
 
 function ChangePassword({updateState}) {
 
-  const [firebaseState, setFirebaseState] = useState({isProcessing: false, message: "", type: ""});
 
-  const firebaseErrors = {
-    'auth/weak-password': 'Le mot de passe est trop faible en terme de sécurité. Veuillez choisir un autre mot de passe.',
-    'auth/requires-recent-login': 'Cette opération requiert une session de connexion plus récente, veuillez vous reconnecter pour changer votre mot de passe'
-  }; // list of firebase error codes to alternate error messages
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState(null);
+  
+  const {changePassword} = useFireAuth();
 
-  const processResetPassword = useCallback(async (state) => {
+  const processResetPassword = useCallback((state) => {
 
-    setFirebaseState({isProcessing: true, message: "", type: ""});
+    setIsProcessing(true);
 
-    try {
+    changePassword(state.password.value).then(() => {
 
-      await auth.currentUser.updatePassword(state.password.value);
+      setError({message: "Votre mot de passe a été mis à jour avec succès.", type: "success"});
+      setIsProcessing(false);
 
-      setFirebaseState(prevData => ({
-        ...prevData, 
-        ...{message: "Votre mot de passe a été mis à jour avec succès.", type: "success"}
-      }))
+    }).catch((error) => {
+      setError({
+        type: 'error',
+        message: error.message
+      });
+      setIsProcessing(false);
+    })
 
-    } catch (error) {
 
-      setFirebaseState(prevData => ({
-        ...prevData, 
-        ...{message: firebaseErrors[error.code] || error.message, type: "error"}
-      }))
-
-    }
-
-    setFirebaseState(prevData => ({
-      ...prevData, 
-      ...{isProcessing: false}
-    }))
-
-  }, [firebaseErrors]);
+  }, [changePassword]);
 
   const stateSchema = {
     password: { value: '', error: '' },
@@ -63,13 +53,13 @@ function ChangePassword({updateState}) {
 
   const {state, handleOnChange, handleOnSubmit} = useFormValidation(stateSchema, validationStateSchema, processResetPassword);
 
-  if(firebaseState.isProcessing) {
+  if(isProcessing) {
     return <PageLoading />;
-  } else if(firebaseState.type === "success") {
+  } else if(error != null && error.type === "success") {
     return (
       <div className="form-container-x">
         <div className="form">
-          <AlertBox type={firebaseState.type} message={firebaseState.message} />
+          <AlertBox error={error} />
           <form  onSubmit={handleOnSubmit}>
             <div className="buttons-container">
               <button onClick={(e) => updateState("menu")} type="button" className="btn-animated primary" >Retourner à votre compte</button>
@@ -82,7 +72,7 @@ function ChangePassword({updateState}) {
     return (
       <div className="form-container-x">
         <div className="form">
-          <AlertBox type={firebaseState.type} message={firebaseState.message} />
+          <AlertBox error={error} />
           <form  onSubmit={handleOnSubmit}>
             <div className="form-row">
               <div className="form-group col-md">

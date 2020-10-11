@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import { auth, firestore } from "../Firebase";
 import AppLoading from "./../components/AppLoading";
 
-export const UserContext = createContext({connectedUser: {}, setAuthListener: () => {}});
+export const UserContext = createContext({connectedUser: {}, setAuthListener: () => {}, setProfilPic: () => {}});
 
 function UserProvider(props) {
 
@@ -12,6 +12,7 @@ function UserProvider(props) {
   useEffect(() => {
 
     if(authToListen) {
+
       const unsubscribe = auth.onAuthStateChanged(async user => {
 
         if (user) {

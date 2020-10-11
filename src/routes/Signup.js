@@ -1,78 +1,62 @@
 import React, {useState, useCallback, useContext} from 'react';
-import { auth, firestore } from './../Firebase';
 import AlertBox from '../components/AlertBox';
 import PageLoading from './../components/PageLoading';
 import useFormValidation from './../hooks/useFormValidation';
 import { UserContext } from "./../providers/UserProvider";
+import useFireAuth from '../hooks/useFireAuth';
+import useFirestore from '../hooks/useFirestore';
 
-function Signup(props) {
+function Signup() {
 
   const {setAuthListener} = useContext(UserContext);
 
-  const [data, setData] = useState({
-    isProcessing: false, 
-    error: {
-      type: "",
-      message: ""
-    }
-  });
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState(null);
 
-  const firebaseErrors = {
-    'auth/email-already-in-use': 'Cette adresse email est déjà utilisée par un autre compte.',
-    'auth/invalid-email': 'L\'adresse email est incorrecte.',
-    'auth/weak-password': 'Le mot de passe est trop simple.'
-  }; // list of firebase error codes to alternate error messages
+  const {createUser} = useFireAuth();
+  const {createUtilisateur} = useFirestore();
 
-  const createUser = useCallback(async (state) => {
+
+  const processCreateUser = useCallback((state) => {
 
     setAuthListener(false);
+    setIsProcessing(true);
 
-    let newState = {
-      ...state,
-      isProcessing: false,
-      error: {
-        type: "",
-        message: ""
-      }
-    }
+    createUser(state.email.value, state.password.value).then((data) => {
 
-    setData(previousState => {
-      return {
-        ...previousState,
-        isProcessing: true,
-        error: {
-          type: "",
-          message: ""
-        }
-      }
-    });
-
-    try {
-      const data = await auth.createUserWithEmailAndPassword(state.email.value, state.password.value);
-
-      await firestore.collection('utilisateurs').doc(data.user.uid).set({
+      createUtilisateur(data.user.uid, {
         email: data.user.email,
         prenom: state.prenom.value,
-        nom: state.nom.value,
-        profil_pic: ''
+        nom: state.nom.value
+      }).then(() => {
+
+        setAuthListener(true);
+
+      }).catch((error) => {
+
+        setError({
+          type: 'error',
+          message: error.message
+        });
+
+        setAuthListener(true);
+        setIsProcessing(false);
+
       })
 
-    } catch (error) {
-      newState = {
-        ...newState,
-        error: {
-          type: "error",
-          message: firebaseErrors[error.code] || error.message
-        }
-      }
-    } finally {
+    }).catch((error) => {
 
-      setData(newState);
+      setError({
+        type: 'error',
+        message: error.message
+      });
+
       setAuthListener(true);
+      setIsProcessing(false);
 
-    }
+    });
 
-  }, [firebaseErrors, setAuthListener]);
+  }, [setAuthListener, createUtilisateur, createUser]);
 
   const stateSchema = {
     nom: { value: '', error: '' },
@@ -122,17 +106,17 @@ function Signup(props) {
     }
   };
 
-  const {state, handleOnChange, handleOnSubmit} = useFormValidation(stateSchema, validationStateSchema, createUser);
+  const {state, handleOnChange, handleOnSubmit} = useFormValidation(stateSchema, validationStateSchema, processCreateUser);
 
 
-  if(data.isProcessing) {
+  if(isProcessing) {
     return <PageLoading />;
   } else {
     return (
       <div id="register-page" className="container-fluid">
         <div className="form-container-m">
           <div className="form">
-            <AlertBox error={data.error} />
+            <AlertBox error={error} />
             <form  onSubmit={handleOnSubmit}>
               <div className="form-group">
                 <label htmlFor="inputNom">Nom*</label>

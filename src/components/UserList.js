@@ -1,4 +1,5 @@
 import React from 'react';
+import {getUserProfilPicUrl} from './../components/Helpers';
 
 function UserList({users}) {
 
@@ -29,7 +30,7 @@ function UserItem({user}) {
     const name = (user.prenom && user.nom) ? (user.prenom + ' ' + user.nom.substring(0,1) + '.') : user.email;
     return (
       <div className="user">
-        <div className="user-image"><div className="user-image-content" style={{backgroundImage: `url(${user.profil_pic === '' ? process.env.PUBLIC_URL + '/img/profile.png' : user.profil_pic } )`}}></div></div>
+        <div className="user-image"><div className="user-image-content" style={{backgroundImage: `url(${getUserProfilPicUrl(user)})`}}></div></div>
         <div className="user-name"><p>{name}</p></div>
       </div>
     )

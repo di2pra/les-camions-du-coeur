@@ -1,39 +1,19 @@
 import React, {useState, useCallback} from 'react';
-import { auth } from './../Firebase';
 import { useHistory } from 'react-router-dom';
 import AlertBox from '../components/AlertBox';
 import PageLoading from './../components/PageLoading';
 import useFormValidation from '../hooks/useFormValidation';
+import useFireAuth from '../hooks/useFireAuth';
 
 function Login() {
 
   // Get the router object
   const history = useHistory();
 
-  const [data, setData] = useState({isProcessing: false, errorMsg: ""});
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState(null);
 
-  const firebaseErrors = {
-    'auth/invalid-email': 'L\'adresse email est incorrecte.',
-    'auth/user-disabled': 'Le compte de cet utilisateur est désactivé.',
-    'auth/user-not-found': 'Le compte introuvable avec cette adresse email.',
-    'auth/wrong-password': 'Le mot de passe est incorrect.',
-    'auth/too-many-requests' : 'Trop de tentatives de connexion, veuillez recommencer plus tard.'
-  }; // list of firebase error codes to alternate error messages
-
-  const processLogin = useCallback(async (state) => {
-
-    setData({isProcessing: true, errorMsg: ""});
-
-    try {
-
-      await auth.signInWithEmailAndPassword(state.email.value, state.password.value);
-
-    } catch (error) {
-
-      setData({isProcessing: false, errorMsg: firebaseErrors[error.code] || error.message});
-    }
-
-  }, [firebaseErrors]);
+  const {logInUser} = useFireAuth();
 
   const stateSchema = {
     email: { value: '', error: '' },
@@ -53,16 +33,37 @@ function Login() {
     }
   };
 
+  const processLogin = useCallback((state) => {
+
+    setIsProcessing(true);
+
+    logInUser(state.email.value, state.password.value).then(() => {
+
+    }).catch((error) => {
+
+      setError({
+        type: 'error',
+        message: error.message
+      });
+
+      setIsProcessing(false);
+
+    });
+
+
+  }, [logInUser]);
+
   const {state, handleOnChange, handleOnSubmit} = useFormValidation(stateSchema, validationStateSchema, processLogin);
 
-  if(data.isProcessing) {
+
+  if(isProcessing) {
     return <PageLoading />;
   } else {
     return (
       <div id="login-page" className="container-fluid">
         <div className="form-container-x">
           <div className="form">
-            <AlertBox type="error" message={data.errorMsg} />
+            <AlertBox error={error} />
             <form  onSubmit={handleOnSubmit}>
               <div className="form-group">
                 <label htmlFor="inputEmail">Email*</label>

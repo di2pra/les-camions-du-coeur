@@ -36,4 +36,8 @@ export function capitalize(s) {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
+export function getUserProfilPicUrl(user) {
+  return (user.profil_pic == null || user.profil_pic === '') ? process.env.PUBLIC_URL + '/img/profile.png' : user.profil_pic;
+}
+
 export const delay = ms => new Promise(res => setTimeout(res, ms));

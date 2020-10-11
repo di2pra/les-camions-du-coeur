@@ -2,11 +2,11 @@ import React, {useContext, useState} from 'react';
 import { storage, firestore } from "../Firebase";
 import { UserContext } from "./../providers/UserProvider";
 import useCroppie from "../hooks/useCroppie";
-import {uuidv4} from './../components/Helpers';
+import {uuidv4, getUserProfilPicUrl} from './../components/Helpers';
 import { useHistory } from 'react-router-dom';
 import ChangePassword from '../components/ChangePassword';
 import DeleteAccount from '../components/DeleteAccount';
-
+import AlertBox from './../components/AlertBox';
 
 function Compte() {
 
@@ -15,7 +15,7 @@ function Compte() {
 
   const [state, setState] = useState({display: "menu"});
   const {connectedUser, setProfilPic} = useContext(UserContext);
-  //const [errorMsg, setErrorMsg] = useState('');
+  const [error, setError] = useState(null);
 
   const handleFireBaseUpload = (imageAsFile) => {
 
@@ -23,15 +23,13 @@ function Compte() {
 
     const uploadTask = storage.ref(cloudRef).put(imageAsFile);
 
-    uploadTask.on('state_changed', 
-    (snapShot) => {
-      //takes a snap shot of the process as it is happening
-      //console.log(snapShot)
-
-    }, (err) => {
-      //catches the errors
-      //setErrorMsg(err.message);
-      //console.log(err)
+    uploadTask.on('state_changed', null, (erro) => {
+      setError(
+        {
+          type: "error",
+          message: erro.message
+        }
+      );
     }, () => {
 
       storage.ref(cloudRef).getDownloadURL().then(fireBaseUrl => {
@@ -93,7 +91,8 @@ function Compte() {
     <div id="account-management">
       <div className="account-card-container">
         <div className="account-banner"></div>
-        <div className="profile-image" style={{backgroundImage: `url(${connectedUser.profil_pic === '' ? process.env.PUBLIC_URL + '/img/profile.png' : connectedUser.profil_pic } )`}} ></div>
+        <AlertBox error={error} />
+        <div className="profile-image" style={{backgroundImage: `url(${getUserProfilPicUrl(connectedUser)})`}} ></div>
         <h3 className="name">{connectedUser.prenom} {connectedUser.nom}</h3>
         <div className="account-card-body container-fluid">
           {contains}

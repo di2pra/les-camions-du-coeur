@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { firestore, firebaseApp } from "../Firebase";
-import {daysGenerator} from "./../components/Helpers";
+import {daysGenerator, delay} from "./../components/Helpers";
 
 function useFirestore() {
 
@@ -206,34 +206,25 @@ function useFirestore() {
 
   }, []);
 
-  const setDemandeAdhesion = useCallback(async(demandeAdhesion) => {
-
-    let demandeAdhesionRef;
-    
-    if(demandeAdhesion.uid == null) {
-
-      demandeAdhesionRef = await firestore.collection('demandeAdhesion').add({
-        centre: demandeAdhesion.centre,
-        utilisateur: demandeAdhesion.utilisateur
-      });
-
-
-      return {...demandeAdhesion,  uid: demandeAdhesionRef.id};
-      
-
-    } else {
-
-      await firestore.collection("centres").doc(demandeAdhesion.uid).update(demandeAdhesion);
-
-      demandeAdhesionRef = await firestore.collection('demandeAdhesion').doc(demandeAdhesion.uid).get();
-
-      return {...demandeAdhesionRef.data(),  uid: demandeAdhesionRef.id};
-
-    }
-
+  const createDemandeAdhesion = useCallback(async(demandeAdhesion) => {
     
 
-  }, [])
+    let demandeAdhesionRef = await firestore.collection('demandeAdhesion').add({
+      centre: demandeAdhesion.centre,
+      utilisateur: demandeAdhesion.utilisateur
+    });
+
+    return {...demandeAdhesion,  uid: demandeAdhesionRef.id};
+
+  }, []);
+
+  const createUtilisateur = useCallback(async (uid, utilisateur) => {
+
+    await firestore.collection('utilisateurs').doc(uid).set(utilisateur);
+
+    return {...utilisateur, uid: uid};
+
+  }, []);
 
   const updateDistributionParticipant = useCallback(async (centreUid, userUid, distributionUid, participants = []) => {
 
@@ -271,7 +262,8 @@ function useFirestore() {
     getCentrePlanning,
     getCentreList,
     updateCentre,
-    setDemandeAdhesion,
+    createDemandeAdhesion,
+    createUtilisateur,
     updateDistributionParticipant,
     deleteDemandeAdhesion
   };

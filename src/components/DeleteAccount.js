@@ -65,7 +65,7 @@ function DeleteAccount({updateState}) {
         <div className="form">
           <AlertBox type={firebaseState.type} message={firebaseState.message} />
           <form  onSubmit={handleOnSubmit}>
-            <AlertBox type="warning" message="Voulez vous réellement supprimer votre compte ?" />
+            <AlertBox error={{type: "warning", message:"Voulez vous réellement supprimer votre compte ?"}} />
             <div className="buttons-container">
               <button disabled={true} type="submit" className="btn-animated primary" >Supprimer mon compte</button>
               <button type="button" onClick={(e) => updateState("menu")} className="btn-animated secondary" >Annuler</button>
