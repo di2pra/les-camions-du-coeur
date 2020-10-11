@@ -6,6 +6,12 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "@types/croppie": "^2.5.5",
+    "@types/jest": "^26.0.14",
+    "@types/node": "^14.11.8",
+    "@types/react": "^16.9.51",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-router-dom": "^5.1.6",
     "bootstrap": "^4.4.1",
     "croppie": "^2.6.5",
     "firebase": "^7.22.1",
@@ -16,7 +22,7 @@
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.4.3",
-    "typescript": "^3.9.3"
+    "typescript": "^3.9.7"
   },
   "homepage": "https://les-camions-du-coeur.web.app/",
   "scripts": {
