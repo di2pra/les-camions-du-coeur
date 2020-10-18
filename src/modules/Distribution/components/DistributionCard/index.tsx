@@ -19,7 +19,7 @@ import ResponsableSection from "../ResponsableSection";
 import ParticipantSection from "../ParticipantSection";
 import { MemberDetails, MemberType } from "../../../Membership/types";
 import { CentreDeDistribution, DemandeAdhesionDetail } from "../../types";
-import { Error } from "../../../../types/Error";
+import { useSystemAlert } from "../../../../components/AlertBox/useSystemAlert";
 
 const getRoleInMemberList = (
   connectedUser: ConnectedUser,
@@ -48,7 +48,7 @@ const DistributionCard: FC<Props> = ({ centre }) => {
 
   const { connectedUser } = useContext(UserContext);
 
-  const [error, setError] = useState<Error | null>(null);
+  const {systemAlert, setError} = useSystemAlert();
   const [isProcessing, setIsProcessing] = useState(true);
   const [selectedCentre, setSelectedCentre] = useState<CentreDeDistribution>(
     centre
@@ -94,12 +94,7 @@ const DistributionCard: FC<Props> = ({ centre }) => {
               })
               .catch((error) => {
                 !isCancelled &&
-                  setError({
-                    type: "error",
-                    message:
-                      "Erreur lors du chagement des demandes d'adhésion : " +
-                      error.message,
-                  });
+                setError("Erreur lors du chagement des demandes d'adhésion : " + error.message);
               });
           } else {
             !isCancelled && setIsProcessing(false);
@@ -114,21 +109,15 @@ const DistributionCard: FC<Props> = ({ centre }) => {
             })
             .catch((error) => {
               !isCancelled &&
-                setError({
-                  type: "error",
-                  message:
-                    "Erreur lors du chagement des informations d'adhésion de l'utilisateur connectée : " +
-                    error.message,
-                });
+              setError(
+                "Erreur lors du chagement des informations d'adhésion de l'utilisateur connectée : " + error.message
+              );
             });
         }
       })
       .catch((error) => {
         !isCancelled &&
-          setError({
-            type: "error",
-            message: "Erreur lors du chagement des membres : " + error.message,
-          });
+        setError("Erreur lors du chagement des membres : " + error.message);
       });
 
     return () => {
@@ -140,6 +129,7 @@ const DistributionCard: FC<Props> = ({ centre }) => {
     getCentreMembreList,
     getCentreDemandeAdhesionList,
     getUserAdhesionDetails,
+    setError
   ]);
 
   const onRegisterClick = useCallback(
@@ -155,15 +145,11 @@ const DistributionCard: FC<Props> = ({ centre }) => {
           setConnectedUserAdhesionDetails(demandeAdhesion);
         })
         .catch((error) => {
-          setError({
-            type: "error",
-            message:
-              "Erreur lors de votre demande d'adhésion : " + error.message,
-          });
+          setError("Erreur lors de votre demande d'adhésion : " + error.message);
         })
         .finally(() => setIsProcessing(false));
     },
-    [createDemandeAdhesion, connectedUser.uid, centre.uid]
+    [createDemandeAdhesion, connectedUser.uid, centre.uid,setError]
   );
 
   const saveAcceptAdhesion = useCallback(
@@ -221,12 +207,7 @@ const DistributionCard: FC<Props> = ({ centre }) => {
           }
         });
       } catch (error) {
-        setError({
-          type: "error",
-          message:
-            "Erreur lors de l'acceptation d'une demande d'adhésion : " +
-            error.message,
-        });
+        setError("Erreur lors de l'acceptation d'une demande d'adhésion : " + error.message);
 
         setCentreMembreDetailsList((prevState) => {
           return {
@@ -241,6 +222,7 @@ const DistributionCard: FC<Props> = ({ centre }) => {
       centre.uid,
       getCentreMembreList,
       getCentreDemandeAdhesionList,
+      setError
     ]
   );
 
@@ -259,23 +241,13 @@ const DistributionCard: FC<Props> = ({ centre }) => {
               setCentreDemandeAdhesionDetailsList(demandeAdhesionList)
             )
             .catch((error) => {
-              setError({
-                type: "error",
-                message:
-                  "Erreur lors du refus d'une demande d'adhésion : " +
-                  error.message,
-              });
+              setError("Erreur lors du refus d'une demande d'adhésion : " + error.message);
             })
             .finally(() => setIsProcessing(false));
         })
         .catch((error) => {
           setIsProcessing(false);
-          setError({
-            type: "error",
-            message:
-              "Erreur lors du refus d'une demande d'adhésion : " +
-              error.message,
-          });
+          setError("Erreur lors du refus d'une demande d'adhésion : " + error.message);
         });
     },
     [
@@ -283,6 +255,7 @@ const DistributionCard: FC<Props> = ({ centre }) => {
       centre.uid,
       deleteDemandeAdhesion,
       getCentreDemandeAdhesionList,
+      setError
     ]
   );
 
@@ -295,22 +268,17 @@ const DistributionCard: FC<Props> = ({ centre }) => {
           setSelectedCentre(newCentre);
         })
         .catch((error) => {
-          setError({
-            type: "error",
-            message:
-              "Erreur lors de la mise à jour de la description de la distribution : " +
-              error.message,
-          });
+          setError("Erreur lors de la mise à jour de la description de la distribution : " + error.message);
         })
         .finally(() => setIsProcessing(false));
     },
-    [selectedCentre, updateCentre]
+    [selectedCentre, updateCentre, setError]
   );
 
-  if (error !== null) {
+  if (systemAlert !== null) {
     return (
       <div id="distribution-details" className="container-fluid container-80">
-        <AlertBox error={error} />
+        <AlertBox systemAlert={systemAlert} />
       </div>
     );
   }

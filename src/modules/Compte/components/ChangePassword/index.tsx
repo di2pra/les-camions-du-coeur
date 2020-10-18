@@ -3,8 +3,8 @@ import AlertBox from '../../../../components/AlertBox';
 import PageLoading from '../../../../components/PageLoading';
 import useFormValidation from '../../../../hooks/useFormValidation';
 import useFireAuth from '../../../../hooks/useFireAuth';
-import { Error } from '../../../../types/Error';
 import { CompteDisplayOptions } from '../../utils';
+import { useSystemAlert } from '../../../../components/AlertBox/useSystemAlert';
 
 interface Props {
   updateState: (displayState: CompteDisplayOptions) => void;
@@ -12,7 +12,7 @@ interface Props {
 
 const ChangePassword: FC<Props> = ({updateState}) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const {systemAlert, setError, setSuccess} = useSystemAlert();
 
   const {changePassword} = useFireAuth();
 
@@ -22,19 +22,16 @@ const ChangePassword: FC<Props> = ({updateState}) => {
 
     changePassword(state.password.value).then(() => {
 
-      setError({message: "Votre mot de passe a été mis à jour avec succès.", type: "success"});
+      setSuccess("Votre mot de passe a été mis à jour avec succès.");
       setIsProcessing(false);
 
     }).catch((error) => {
-      setError({
-        type: 'error',
-        message: error.message
-      });
+      setError(error.message);
       setIsProcessing(false);
     });
 
 
-  }, [changePassword]);
+  }, [changePassword, setError, setSuccess]);
 
   const stateSchema = {
     password: { value: '', error: '' },
@@ -63,11 +60,11 @@ const ChangePassword: FC<Props> = ({updateState}) => {
 
   if(isProcessing) {
     return <PageLoading />;
-  } else if(error != null && error.type === "success") {
+  } else if(systemAlert != null && systemAlert.type === "success") {
     return (
       <div className="form-container-x">
         <div className="form">
-          <AlertBox error={error} />
+          <AlertBox systemAlert={systemAlert} />
           <form onSubmit={handleOnSubmit}>
             <div className="buttons-container">
               <button
@@ -86,7 +83,7 @@ const ChangePassword: FC<Props> = ({updateState}) => {
     return (
       <div className="form-container-x">
         <div className="form">
-          <AlertBox error={error} />
+          <AlertBox systemAlert={systemAlert} />
           <form onSubmit={handleOnSubmit}>
             <div className="form-row">
               <div className="form-group col-md">

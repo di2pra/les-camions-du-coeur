@@ -7,6 +7,8 @@ import PageLoading from '../../components/PageLoading';
 import {capitalize} from '../../components/Helpers';
 import AlertBox from '../../components/AlertBox';
 import useFirestore from '../../hooks/useFirestore';
+import { SystemAlertTypes } from '../../components/AlertBox/types/SystemAlert';
+import { useSystemAlert } from '../../components/AlertBox/useSystemAlert';
 
 function DistributionListContainer({centres, selectedCentreIndex, updateSelectedCentre}) {
 
@@ -21,8 +23,14 @@ function DistributionListContainer({centres, selectedCentreIndex, updateSelected
       </ul>
     );
   } else if(centres.length === 0) {
-    return (<AlertBox error={{type: "warning",
-    message: "Vous devez d'abord adhérer à une distribution pour pouvoir consulter son planning."}} />);
+    return (
+      <AlertBox
+        systemAlert={{
+          type: SystemAlertTypes.WARNING,
+          message: "Vous devez d'abord adhérer à une distribution pour pouvoir consulter son planning."
+        }}
+      />
+    );
   } else {
     return null;
   }
@@ -36,7 +44,7 @@ function Planning() {
 
   const {connectedUser} = useContext(UserContext);
 
-  const [error, setError] = useState(null);
+  const {systemAlert, setError} = useSystemAlert();
   const [userCentreList, setUserCentreList] = useState({isProcessing: null, data: []});
 
   const [selectedCentreIndex, setSelectedCentreIndex] = useState(null);
@@ -71,17 +79,14 @@ function Planning() {
       });
 
     }).catch((error) => {
-      if(!isCancelled) setError({
-        type: "error",
-        message: "Erreur lors du chargement des centres : " + error.message
-      });
+      if(!isCancelled) setError("Erreur lors du chargement des centres : " + error.message);
     });
 
     return () => {
       isCancelled = true;
     };
 
-  }, [connectedUser.uid, getUserCentreList]);
+  }, [connectedUser.uid, getUserCentreList, setError]);
 
 
   useEffect(() => {
@@ -156,10 +161,7 @@ function Planning() {
           }
 
         }).catch((error) => {
-          if (!isCancelled) setError({
-            type: "error",
-            message: "Erreur lors du chargement des membres de la distribution : " + error.message
-          });
+          if (!isCancelled) setError("Erreur lors du chargement des membres de la distribution : " + error.message);
         });
 
         getCentrePlanning(userCentreList.data[selectedCentreIndex]).then((planningList) => {
@@ -177,10 +179,7 @@ function Planning() {
           }
 
         }).catch((error) => {
-          if (!isCancelled) setError({
-            type: "error",
-            message: "Erreur lors du chargement des plannings : " + error.message
-          });
+          if (!isCancelled) setError("Erreur lors du chargement des plannings : " + error.message);
         });
 
       } else {
@@ -198,7 +197,7 @@ function Planning() {
 
 
 
-  }, [userCentreList, selectedCentreIndex, getCentreMembreList, getCentrePlanning]);
+  }, [userCentreList, selectedCentreIndex, getCentreMembreList, getCentrePlanning, setError]);
 
 
 
@@ -211,10 +210,10 @@ function Planning() {
   }, [history, userCentreList.data]);
 
 
-  if(error !== null) {
+  if(systemAlert !== null) {
     return (
       <div className="container-fluid container-80">
-        <AlertBox error={error} />
+        <AlertBox systemAlert={systemAlert} />
       </div>
     );
   } else if(

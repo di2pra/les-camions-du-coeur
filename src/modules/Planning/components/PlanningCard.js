@@ -4,6 +4,7 @@ import UserList from '../../User/components/UserList';
 import AlertBox from '../../../components/AlertBox';
 import useFirestore from '../../../hooks/useFirestore';
 import {LoadingIcon} from '../../../components/Icons';
+import { useSystemAlert } from '../../../components/AlertBox/useSystemAlert';
 
 function CardHeader({distribution, connectedUser, onUpdateClick, centre}) {
 
@@ -38,7 +39,7 @@ function CardBody({distribution, participantList, error}) {
   if(error !== null) {
     return (
       <div className="planning-card-body">
-        <AlertBox error={error}/>
+        <AlertBox systemAlert={error}/>
       </div>
     );
   } else if(distribution.isProcessing) {
@@ -82,7 +83,7 @@ function CardFooter({distribution}) {
 
 function PlanningCard({planning, connectedUser, centre, membres}) {
 
-  const [error, setError] = useState(null);
+  const {systemAlert, setError} = useSystemAlert();
   const [distribution, setDistributionData] = useState({isProcessing: false, data: planning});
   const [participantList, setParticipantList] = useState([]);
 
@@ -116,10 +117,7 @@ function PlanningCard({planning, connectedUser, centre, membres}) {
 
     }).catch((error) => {
 
-      setError({
-        type: "error",
-        message: "Erreur lors de la mise à jour de la distribution : " + error.message
-      });
+      setError("Erreur lors de la mise à jour de la distribution : " + error.message);
 
     });
 
@@ -128,7 +126,8 @@ function PlanningCard({planning, connectedUser, centre, membres}) {
     centre.uid,
     connectedUser.uid,
     distribution.data.uid,
-    distribution.data.participants
+    distribution.data.participants,
+    setError
   ]);
 
 
@@ -158,7 +157,7 @@ function PlanningCard({planning, connectedUser, centre, membres}) {
           centre={centre}
           onUpdateClick={onUpdateClick}
         />
-        <CardBody distribution={distribution} participantList={participantList} error={error} />
+        <CardBody distribution={distribution} participantList={participantList} error={systemAlert} />
         <CardFooter distribution={distribution}/>
       </div>
     </div>

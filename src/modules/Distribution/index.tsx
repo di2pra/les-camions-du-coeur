@@ -4,11 +4,11 @@ import { useParams, useHistory } from "react-router-dom";
 import PageLoading from "../../components/PageLoading";
 import AlertBox from "../../components/AlertBox";
 import useFirestore from "../../hooks/useFirestore";
-import { Error } from "../../types/Error";
 
 import DistributionCard from "./components/DistributionCard";
 import CentreItem from "./components/CentreItem";
 import { CentreDeDistribution } from "./types";
+import { useSystemAlert } from "../../components/AlertBox/useSystemAlert";
 
 
 interface Params {
@@ -22,7 +22,7 @@ const Distribution: FC<Props> = () => {
   const { nom, jour } = useParams<Params>();
   const history = useHistory();
 
-  const [error, setError] = useState<Error | null>(null);
+  const {systemAlert, setError} = useSystemAlert();
   const [centreList, setCentreList] = useState<{
     isProcessing: boolean | null;
     data: CentreDeDistribution[];
@@ -61,18 +61,13 @@ const Distribution: FC<Props> = () => {
       })
       .catch((error) => {
         if (!isCancelled)
-          setError({
-            type: "error",
-            message:
-              "Erreur lors du chargement de la liste des distributions : " +
-              error.message,
-          });
+          setError("Erreur lors du chargement de la liste des distributions : " + error.message);
       });
 
     return () => {
       isCancelled = true;
     };
-  }, [getCentreList]);
+  }, [getCentreList, setError]);
 
   useEffect(() => {
     if (centreList.isProcessing === true) {
@@ -93,10 +88,10 @@ const Distribution: FC<Props> = () => {
     }
   }, [jour, nom, history, centreList]);
 
-  if (error !== null) {
+  if (systemAlert !== null) {
     return (
       <div className="container-fluid container-80">
-        <AlertBox error={error} />
+        <AlertBox systemAlert={systemAlert} />
       </div>
     );
   }

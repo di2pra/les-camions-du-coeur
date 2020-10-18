@@ -1,9 +1,10 @@
 import React, {useState, useCallback} from 'react';
 import { useHistory } from 'react-router-dom';
 import AlertBox from '../../components/AlertBox';
-import PageLoading from './../../components/PageLoading';
+import PageLoading from '../../components/PageLoading';
 import useFormValidation from '../../hooks/useFormValidation';
 import useFireAuth from '../../hooks/useFireAuth';
+import { SystemAlert, SystemAlertTypes } from '../../components/AlertBox/types/SystemAlert';
 
 function Login() {
 
@@ -11,7 +12,7 @@ function Login() {
   const history = useHistory();
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState(null);
+  const [systemAlert, setSystemAlert] = useState<SystemAlert | null>(null);
 
   const {logInUser} = useFireAuth();
 
@@ -41,8 +42,8 @@ function Login() {
 
     }).catch((error) => {
 
-      setError({
-        type: 'error',
+      setSystemAlert({
+        type: SystemAlertTypes.ERROR,
         message: error.message
       });
 
@@ -63,7 +64,7 @@ function Login() {
       <div id="login-page" className="container-fluid">
         <div className="form-container-x">
           <div className="form">
-            <AlertBox error={error} />
+            <AlertBox systemAlert={systemAlert} />
             <form  onSubmit={handleOnSubmit}>
               <div className="form-group">
                 <label htmlFor="inputEmail">Email*</label>

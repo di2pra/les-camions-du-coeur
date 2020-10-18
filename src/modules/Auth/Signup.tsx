@@ -5,13 +5,63 @@ import useFormValidation from '../../hooks/useFormValidation';
 import { UserContext } from "../../providers/UserProvider";
 import useFireAuth from '../../hooks/useFireAuth';
 import useFirestore from '../../hooks/useFirestore';
+import { SystemAlert, SystemAlertTypes } from '../../components/AlertBox/types/SystemAlert';
+
+const stateSchema = {
+  nom: { value: '', error: '' },
+  prenom: { value: '', error: '' },
+  email: { value: '', error: '' },
+  email1: { value: '', error: '' },
+  password: { value: '', error: '' },
+  password1: { value: '', error: '' }
+};
+
+
+const validationStateSchema = {
+  nom: {
+    required: true
+  },
+  prenom: {
+    required: true
+  },
+  email: {
+    required: true,
+    validator: {
+      regEx: /\S+@\S+\.\S+/,
+      error: 'L\'adresse email est incorrecte.'
+    },
+    isEqualTo: 'email1'
+  },
+  email1: {
+    required: true,
+    validator: {
+      regEx: /\S+@\S+\.\S+/,
+      error: 'L\'adresse email est incorrecte.'
+    },
+    hasToMatch: {
+      value: 'email',
+      error: 'Les adresses email que vous avez saisies ne correspondent pas.'
+    }
+  },
+  password: {
+    required: true,
+    isEqualTo: 'password1'
+  },
+  password1: {
+    required: true,
+    hasToMatch: {
+      value: 'password',
+      error: 'Les mots de passes que vous avez saisis ne correspondent pas.'
+    }
+  }
+};
 
 function Signup() {
 
   const {setAuthListener} = useContext(UserContext);
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState(null);
+  const [systemAlert, setSystemAlert] = useState<SystemAlert | null>(null);
 
   const {createUser} = useFireAuth();
   const {createUtilisateur} = useFirestore();
@@ -23,6 +73,10 @@ function Signup() {
     setIsProcessing(true);
 
     createUser(state.email.value, state.password.value).then((data) => {
+      if (! data.user) {
+        setIsProcessing(false);
+        return;
+      }
 
       createUtilisateur(data.user.uid, {
         email: data.user.email,
@@ -34,8 +88,8 @@ function Signup() {
 
       }).catch((error) => {
 
-        setError({
-          type: 'error',
+        setSystemAlert({
+          type: SystemAlertTypes.ERROR,
           message: error.message
         });
 
@@ -46,8 +100,8 @@ function Signup() {
 
     }).catch((error) => {
 
-      setError({
-        type: 'error',
+      setSystemAlert({
+        type: SystemAlertTypes.ERROR,
         message: error.message
       });
 
@@ -57,54 +111,6 @@ function Signup() {
     });
 
   }, [setAuthListener, createUtilisateur, createUser]);
-
-  const stateSchema = {
-    nom: { value: '', error: '' },
-    prenom: { value: '', error: '' },
-    email: { value: '', error: '' },
-    email1: { value: '', error: '' },
-    password: { value: '', error: '' },
-    password1: { value: '', error: '' }
-  };
-
-  const validationStateSchema = {
-    nom: {
-      required: true
-    },
-    prenom: {
-      required: true
-    },
-    email: {
-      required: true,
-      validator: {
-        regEx: /\S+@\S+\.\S+/,
-        error: 'L\'adresse email est incorrecte.'
-      },
-      isEqualTo: 'email1'
-    },
-    email1: {
-      required: true,
-      validator: {
-        regEx: /\S+@\S+\.\S+/,
-        error: 'L\'adresse email est incorrecte.'
-      },
-      hasToMatch: {
-        value: 'email',
-        error: 'Les adresses email que vous avez saisies ne correspondent pas.'
-      }
-    },
-    password: {
-      required: true,
-      isEqualTo: 'password1'
-    },
-    password1: {
-      required: true,
-      hasToMatch: {
-        value: 'password',
-        error: 'Les mots de passes que vous avez saisis ne correspondent pas.'
-      }
-    }
-  };
 
   const {state, handleOnChange, handleOnSubmit} = useFormValidation(
     stateSchema,
@@ -120,7 +126,7 @@ function Signup() {
       <div id="register-page" className="container-fluid">
         <div className="form-container-m">
           <div className="form">
-            <AlertBox error={error} />
+            <AlertBox systemAlert={systemAlert} />
             <form  onSubmit={handleOnSubmit}>
               <div className="form-group">
                 <label htmlFor="inputNom">Nom*</label>

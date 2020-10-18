@@ -74,7 +74,7 @@ function ResetPassword() {
       <div id="reset-password-page" className="container-fluid">
         <div className="form-container-x">
           <div className="form">
-            <AlertBox error={firebaseState} />
+            <AlertBox systemAlert={firebaseState} />
             <form  onSubmit={handleOnSubmit}>
               <div className="buttons-container">
                 <button onClick={(e) => history.push('/')} type="button" className="btn-animated primary" >Retourner à la page d&apos;Accueil</button>
@@ -89,7 +89,7 @@ function ResetPassword() {
       <div id="reset-password-page" className="container-fluid">
         <div className="form-container-x">
           <div className="form">
-            <AlertBox error={firebaseState} />
+            <AlertBox systemAlert={firebaseState} />
             <form  onSubmit={handleOnSubmit}>
               <div className="form-group">
                 <label htmlFor="inputEmail">Email*</label>

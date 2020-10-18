@@ -53,7 +53,7 @@ function Compte() {
     <div id="account-management">
       <div className="account-card-container">
         <div className="account-banner"></div>
-        <AlertBox error={error} />
+        <AlertBox systemAlert={error} />
         <div
           className="profile-image"
           style={{

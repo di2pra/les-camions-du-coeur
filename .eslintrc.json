@@ -34,16 +34,8 @@
         "extensions": [
           ".js",
           ".jsx",
-          ".android.js",
-          ".android.jsx",
-          ".ios.js",
-          ".ios.jsx",
           ".ts",
-          ".tsx",
-          ".android.ts",
-          ".android.tsx",
-          ".ios.ts",
-          ".ios.tsx"
+          ".tsx"
         ]
       },
       "alias": {

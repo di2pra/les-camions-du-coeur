@@ -3,6 +3,7 @@ import React, { FC, memo } from 'react';
 import { ConnectedUser } from "../../../../providers/UserProvider";
 import AlertBox from '../../../../components/AlertBox';
 import { DemandeAdhesionDetail } from '../../../../modules/Distribution/types';
+import { SystemAlertTypes } from '../../../../components/AlertBox/types/SystemAlert';
 
 interface Props {
   connectedUser: ConnectedUser,
@@ -17,7 +18,14 @@ const RegisterBanner: FC<Props> = ({ connectedUser, onRegisterClick, adhesion, i
   }
 
   if (adhesion !== null && adhesion.utilisateur === connectedUser.uid) {
-    return <AlertBox error={{ type: "info", message: "Votre demande d'adhésion pour cette distribution est en attente de validation par un responsable." }} />;
+    return (
+      <AlertBox
+        systemAlert={{
+          type: SystemAlertTypes.INFO,
+          message: "Votre demande d'adhésion pour cette distribution est en attente de validation par un responsable."
+        }}
+      />
+    );
   }
 
   return (

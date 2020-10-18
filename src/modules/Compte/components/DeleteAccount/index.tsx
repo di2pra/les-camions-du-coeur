@@ -4,6 +4,7 @@ import AlertBox from '../../../../components/AlertBox';
 import PageLoading from "../../../../components/PageLoading";
 import {UserContext} from "../../../../providers/UserProvider";
 import { CompteDisplayOptions } from '../../utils';
+import { SystemAlertTypes } from '../../../../components/AlertBox/types/SystemAlert';
 
 interface Props {
   updateState: (displayState: CompteDisplayOptions) => void;
@@ -14,14 +15,18 @@ const DeleteAccount: FC<Props> = ({updateState}) => {
     connectedUser: { profil_pic_ref },
   } = useContext(UserContext);
 
-  const [firebaseState, setFirebaseState] = useState({isProcessing: false, message: "", type: ""});
+  const [firebaseState, setFirebaseState] = useState<{
+    isProcessing: boolean;
+    message: string;
+    type: SystemAlertTypes;
+  }>({isProcessing: false, message: "", type: SystemAlertTypes.UNDEFINED});
 
   const processDeleteAccount = useCallback(async () => {
     if (!auth.currentUser) {
       return;
     }
 
-    setFirebaseState({isProcessing: true, message: "", type: ""});
+    setFirebaseState({isProcessing: true, message: "", type: SystemAlertTypes.UNDEFINED});
 
     try {
       if (profil_pic_ref) {
@@ -37,7 +42,7 @@ const DeleteAccount: FC<Props> = ({updateState}) => {
 
       setFirebaseState((prevData) => ({
         ...prevData,
-        ...{ message: "Votre a été supprimé avec succès.", type: "success" },
+        ...{ message: "Votre a été supprimé avec succès.", type: SystemAlertTypes.SUCCESS },
       }));
     } catch (error) {
       const firebaseError = error as FirebaseError;
@@ -45,7 +50,7 @@ const DeleteAccount: FC<Props> = ({updateState}) => {
         ...prevData,
         ...{
           message: FirebaseErrors[firebaseError.code] || firebaseError.message,
-          type: "error",
+          type: SystemAlertTypes.ERROR,
         },
       }));
     }
@@ -70,13 +75,11 @@ const DeleteAccount: FC<Props> = ({updateState}) => {
   return (
     <div className="form-container-x">
       <div className="form">
-        <AlertBox
-          error={{ type: firebaseState.type, message: firebaseState.message }}
-        />
+        <AlertBox systemAlert={firebaseState} />
         <form onSubmit={handleOnSubmit}>
           <AlertBox
-            error={{
-              type: "warning",
+            systemAlert={{
+              type: SystemAlertTypes.WARNING,
               message: "Voulez vous réellement supprimer votre compte ?",
             }}
           />

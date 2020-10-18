@@ -1,15 +1,16 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 
 import { storage, firestore } from "../../../Firebase";
 
 import { uuidv4 } from "../../../components/Helpers";
 import { ConnectedUser } from "../../../providers/UserProvider";
+import { useSystemAlert } from "../../../components/AlertBox/useSystemAlert";
 
 export  const useHandleAvatarUpload = (
   connectedUser: ConnectedUser,
   setProfilPic: (fireBaseUrl: string, cloudRef: string) => void
 ) => {
-  const [error, setError] = useState<{type: string, message: string} | null>(null);
+  const {systemAlert, setError} = useSystemAlert();
 
   const upload = useCallback(
     (imageAsFile: any) => {
@@ -19,12 +20,7 @@ export  const useHandleAvatarUpload = (
       uploadTask.on(
         "state_changed",
         null,
-        (erro) => {
-          setError({
-            type: "error",
-            message: erro.message,
-          });
-        },
+        (erro) => setError(erro.message),
         () => {
           storage
             .ref(cloudRef)
@@ -57,8 +53,8 @@ export  const useHandleAvatarUpload = (
         }
       );
     },
-    [connectedUser, setProfilPic]
+    [connectedUser, setProfilPic, setError]
   );
 
-  return { error, upload };
+  return { error: systemAlert, upload };
 };
