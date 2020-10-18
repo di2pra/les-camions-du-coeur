@@ -13,7 +13,7 @@ interface Props {
 const ChangePassword: FC<Props> = ({updateState}) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  
+
   const {changePassword} = useFireAuth();
 
   const processResetPassword = useCallback((state) => {
@@ -31,7 +31,7 @@ const ChangePassword: FC<Props> = ({updateState}) => {
         message: error.message
       });
       setIsProcessing(false);
-    })
+    });
 
 
   }, [changePassword]);
@@ -55,7 +55,11 @@ const ChangePassword: FC<Props> = ({updateState}) => {
     }
   };
 
-  const {state, handleOnChange, handleOnSubmit} = useFormValidation(stateSchema, validationStateSchema, processResetPassword);
+  const {state, handleOnChange, handleOnSubmit} = useFormValidation(
+    stateSchema,
+    validationStateSchema,
+    processResetPassword
+  );
 
   if(isProcessing) {
     return <PageLoading />;
@@ -137,8 +141,8 @@ const ChangePassword: FC<Props> = ({updateState}) => {
       </div>
     );
   }
-  
 
-}
+
+};
 
 export default ChangePassword;

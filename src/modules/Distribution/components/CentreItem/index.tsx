@@ -36,6 +36,6 @@ const CentreItem: FC<Props> = ({ centre }) => {
       </div>
     </Link>
   );
-}
+};
 
 export default CentreItem;

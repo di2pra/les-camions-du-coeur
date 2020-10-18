@@ -42,7 +42,7 @@ function Signup() {
         setAuthListener(true);
         setIsProcessing(false);
 
-      })
+      });
 
     }).catch((error) => {
 
@@ -106,7 +106,11 @@ function Signup() {
     }
   };
 
-  const {state, handleOnChange, handleOnSubmit} = useFormValidation(stateSchema, validationStateSchema, processCreateUser);
+  const {state, handleOnChange, handleOnSubmit} = useFormValidation(
+    stateSchema,
+    validationStateSchema,
+    processCreateUser
+  );
 
 
   if(isProcessing) {

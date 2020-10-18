@@ -34,18 +34,18 @@ function useCroppie(
   }, [displayForm]);
 
   const saveImg = useCallback((e) => {
-    croppie.current
-    ?.result({ type: 'blob', format: 'png' })
+    croppie.current &&
+    croppie.current.result({ type: 'blob', format: 'png' })
     .then((optimizedImgAsFile) => {
       handleFireBaseUpload(optimizedImgAsFile);
       displayForm(false);
       setImageAsUrl('');
-    })
+    });
   }, [handleFireBaseUpload, displayForm]);
 
   const loadCroppie = useCallback((e) => {
     // get the image as file
-    var imageAsFile = e.target.files[0];
+    const imageAsFile = e.target.files[0];
 
     // abort if the file is undefined
     if(imageAsFile === undefined) {
@@ -53,7 +53,7 @@ function useCroppie(
     }
 
     // read the image and bind it with the croppie
-    var reader = new FileReader();
+    const reader = new FileReader();
 
     reader.addEventListener("load", () => {
       if (reader) {

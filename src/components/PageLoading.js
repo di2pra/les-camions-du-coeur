@@ -9,8 +9,8 @@ function PageLoading () {
         <LoadingIcon/>
       </div>
     </div>
-  )
-  
+  );
+
 }
 
 

@@ -10,8 +10,9 @@ function Logout(props) {
     try {
       await auth.signOut();
     } catch (error) {
+      //
     }
-    
+
   }, []);
 
 	useEffect(() => {

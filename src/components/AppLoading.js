@@ -6,8 +6,7 @@ function AppLoading () {
     <h2>Chargement...</h2><br />
     <div className="spinner-border text-danger" role="status" aria-hidden="true"></div>
   </div>
-  )
-  
+  );
 }
 
 

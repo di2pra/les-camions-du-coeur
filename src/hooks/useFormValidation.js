@@ -22,12 +22,12 @@ function useFormValidation(stateSchema, validationSchema = {}, callback) {
 
         newState = {
           ...newState,
-          [key]: { 
-            value: stateValue, 
-            error: 'Ce champs est obligatoire.', 
-            classValue: 'is-invalid' 
+          [key]: {
+            value: stateValue,
+            error: 'Ce champs est obligatoire.',
+            classValue: 'is-invalid'
           }
-        }
+        };
 
       }
 
@@ -50,7 +50,7 @@ function useFormValidation(stateSchema, validationSchema = {}, callback) {
 
   }, [state, validationSchema]);
 
-  
+
 
   // Used to handle every changes in every input
   const handleOnChange = useCallback(
@@ -89,22 +89,22 @@ function useFormValidation(stateSchema, validationSchema = {}, callback) {
       }
 
       let newState = {
-        [name]: { 
-          value, 
-          error, 
-          classValue: (error === '') ? 'is-valid' : 'is-invalid' 
+        [name]: {
+          value,
+          error,
+          classValue: (error === '') ? 'is-valid' : 'is-invalid'
         }
-      }
+      };
 
       // isEqual reset field on update
       if(validationSchema[name].isEqualTo) {
 
         const inputName = validationSchema[name].isEqualTo;
-        
+
         newState = {
-          ...newState, 
+          ...newState,
           [inputName]: {}
-        }
+        };
 
       }
 

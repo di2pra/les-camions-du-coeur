@@ -1,3 +1,8 @@
+export enum MemberType {
+  MEMBER = 'membre',
+  RESPONSABLE = 'responsable'
+}
+
 export interface Member {
   utilisateur: string;
   type: string;

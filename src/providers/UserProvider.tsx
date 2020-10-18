@@ -45,7 +45,7 @@ const UserProvider: FC = ({children}) => {
               nom,
               prenom,
               profil_pic,
-            } = userData.data() as ConnectedUser;          
+            } = userData.data() as ConnectedUser;
 
             setConnectedUser({
               uid: user.uid,
@@ -68,8 +68,8 @@ const UserProvider: FC = ({children}) => {
   }, [authToListen]);
 
   const setProfilPic = (profil_pic: string, cloud_ref: string) => {
-    setConnectedUser(prevObject => ({...prevObject, profil_pic: profil_pic, profil_pic_ref: cloud_ref}))
-  }
+    setConnectedUser(prevObject => ({...prevObject, profil_pic: profil_pic, profil_pic_ref: cloud_ref}));
+  };
 
   return (
     connectedUser.authWasListened
@@ -83,6 +83,6 @@ const UserProvider: FC = ({children}) => {
     : <AppLoading />
   );
 
-}
+};
 
 export default UserProvider;

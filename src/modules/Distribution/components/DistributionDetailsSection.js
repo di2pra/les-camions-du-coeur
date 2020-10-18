@@ -14,16 +14,16 @@ function DistributionDetailSection({centre, isConnectedUserResponsable, onSaveCe
     setState({
       editMode: false,
       value: centre.informations
-    })
+    });
 
-  }, [centre])
+  }, [centre]);
 
   const handleTextValueChange = (event) => {
     event.preventDefault();
 
     setState({editMode: true, value: event.target.value});
 
-  }
+  };
 
   const handleEditModeChange = (event) => {
     event.preventDefault();
@@ -32,10 +32,10 @@ function DistributionDetailSection({centre, isConnectedUserResponsable, onSaveCe
       return {
         ...previousState,
         editMode : !previousState.editMode
-      }
-    })
+      };
+    });
 
-  }
+  };
 
   const onUpdateSaveClick = (event) => {
 
@@ -43,7 +43,7 @@ function DistributionDetailSection({centre, isConnectedUserResponsable, onSaveCe
 
     onSaveCentreDesc(state.value);
 
-  }
+  };
 
   if(isConnectedUserResponsable) {
 
@@ -60,12 +60,12 @@ function DistributionDetailSection({centre, isConnectedUserResponsable, onSaveCe
             </div>
           </form>
         </section>
-      )
+      );
 
-      
-  
+
+
     } else {
-  
+
       return (
         <section className="desc-section">
           <h1>Distribution à {capitalize(centre.nom)} le {centre.jour}</h1>
@@ -74,8 +74,8 @@ function DistributionDetailSection({centre, isConnectedUserResponsable, onSaveCe
             <button onClick={handleEditModeChange} type="button" className="btn-animated primary">Modifier</button>
           </div>
         </section>
-      )
-  
+      );
+
     }
 
   } else {
@@ -85,11 +85,11 @@ function DistributionDetailSection({centre, isConnectedUserResponsable, onSaveCe
         <h1>Distribution à {capitalize(centre.nom)} le {centre.jour}</h1>
         <p>{state.value === "" ? 'Aucune information' : state.value }</p>
       </section>
-    )
+    );
 
   }
 
-  
+
 }
 
 export default DistributionDetailSection;

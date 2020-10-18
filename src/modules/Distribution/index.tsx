@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 import { useParams, useHistory } from "react-router-dom";
 
 import PageLoading from "../../components/PageLoading";
@@ -10,8 +10,16 @@ import DistributionCard from "./components/DistributionCard";
 import CentreItem from "./components/CentreItem";
 import { CentreDeDistribution } from "./types";
 
-function Distribution() {
-  const { nom, jour } = useParams();
+
+interface Params {
+  nom: string;
+  jour: string;
+}
+
+type Props = {}
+
+const Distribution: FC<Props> = () => {
+  const { nom, jour } = useParams<Params>();
   const history = useHistory();
 
   const [error, setError] = useState<Error | null>(null);
@@ -22,7 +30,10 @@ function Distribution() {
     isProcessing: null,
     data: [],
   });
-  const [selectedCentre, setSelectedCentre] = useState<CentreDeDistribution | null>(null);
+  const [
+    selectedCentre,
+    setSelectedCentre,
+  ] = useState<CentreDeDistribution | null>(null);
 
   const { getCentreList } = useFirestore();
 
@@ -64,19 +75,20 @@ function Distribution() {
   }, [getCentreList]);
 
   useEffect(() => {
-    if (centreList.isProcessing === false) {
-      if (jour == null || nom === null) {
-        setSelectedCentre(null);
-      } else {
-        const selectedCentre = centreList.data.find((centre) => {
-          return centre.nom === nom && centre.jour === jour;
-        });
+    if (centreList.isProcessing === true) {
+      return;
+    }
+    if (jour == null || nom == null) {
+      setSelectedCentre(null);
+    } else {
+      const selectedCentre = centreList.data.find((centre) => {
+        return centre.nom === nom && centre.jour === jour;
+      });
 
-        if (selectedCentre == null) {
-          history.push("/distribution");
-        } else {
-          setSelectedCentre(selectedCentre);
-        }
+      if (selectedCentre == null) {
+        history.push("/distribution");
+      } else {
+        setSelectedCentre(selectedCentre);
       }
     }
   }, [jour, nom, history, centreList]);
@@ -88,24 +100,24 @@ function Distribution() {
       </div>
     );
   }
-  
+
   if (centreList.isProcessing === true) {
     return <PageLoading />;
   }
-  
+
   if (selectedCentre == null) {
     return (
       <div className="container-fluid">
         <div className="home-card-container">
-          {centreList.data.map((centre) => {
-            return <CentreItem key={centre.uid} centre={centre} />;
-          })}
+          {centreList.data.map((centre) => (
+            <CentreItem key={centre.uid} centre={centre} />
+          ))}
         </div>
       </div>
     );
   }
-  
+
   return <DistributionCard centre={selectedCentre} />;
-}
+};
 
 export default Distribution;
