@@ -4,10 +4,13 @@ import { auth } from '../../Firebase';
 import AlertBox from '../../components/AlertBox';
 import PageLoading from '../../components/PageLoading';
 import useFormValidation from '../../hooks/useFormValidation';
+import { FirebaseErrors } from '../../types/Error';
 
-interface FirebaseErrors {
-  [key: string]: string;
-}
+const firebaseErrors : FirebaseErrors = {
+  'auth/invalid-email': 'L\'adresse email est incorrecte.',
+  'auth/user-disabled': 'Le compte de cet utilisateur est désactivé.',
+  'auth/user-not-found': 'Le compte introuvable avec cette adresse email.'
+}; // list of firebase error codes to alternate error messages
 
 const ResetPassword : FC<{}> = () => {
 
@@ -15,12 +18,6 @@ const ResetPassword : FC<{}> = () => {
   const history = useHistory();
 
   const [firebaseState, setFirebaseState] = useState({isProcessing: false, message: "", type: ""});
-
-  const firebaseErrors : FirebaseErrors = {
-    'auth/invalid-email': 'L\'adresse email est incorrecte.',
-    'auth/user-disabled': 'Le compte de cet utilisateur est désactivé.',
-    'auth/user-not-found': 'Le compte introuvable avec cette adresse email.'
-  }; // list of firebase error codes to alternate error messages
 
   const processResetPassword = useCallback(async (state) => {
 
@@ -49,7 +46,7 @@ const ResetPassword : FC<{}> = () => {
       ...{isProcessing: false}
     }))
 
-  }, [firebaseErrors]);
+  }, []);
 
   const stateSchema = {
     email: { value: '', error: '' }
