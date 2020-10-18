@@ -10,10 +10,11 @@ import CompteMenu from "./components/CompteMenu";
 import DeleteAccount from "./components/DeleteAccount";
 import { useHandleAvatarUpload } from "./hooks/useHandleAvatarUpload";
 import { CompteDisplayOptions } from "./utils";
+import {User} from "./../../modules/User/types";
 
 function Compte() {
   const [display, setDisplay] = useState(CompteDisplayOptions.MENU);
-  const { connectedUser, setProfilPic } = useContext(UserContext);
+  const { connectedUser, setProfilPic } = useContext(UserContext as unknown as React.Context<{connectedUser: User; setProfilPic: (profil_pic: string, cloud_ref: string) => void;}>);
 
   const updateState = useCallback(
     (displayState: CompteDisplayOptions) => setDisplay(displayState),

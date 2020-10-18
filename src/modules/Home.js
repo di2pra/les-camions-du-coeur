@@ -7,32 +7,7 @@ function Home() {
 
   const {connectedUser} = useContext(UserContext);
 
-  if(connectedUser.uid === "") {
-    return (
-      <div className="container-fluid">
-        <div className="home-card-container">
-          <Link className="home-card-link" to="/connexion">
-            <div className="home-card">
-              <div className="home-card-body">
-                <h5 className="card-title">Se connecter</h5>
-                <i className="card-icon" ><LoginIcon /></i>
-                <p className="card-text">Se connecter pour accèder à l'application</p>
-              </div>
-            </div>
-          </Link>
-          <Link className="home-card-link" to="/sinscrire">
-            <div className="home-card">
-              <div className="home-card-body">
-                <h5 className="card-title">Créer votre compte</h5>
-                <i className="card-icon" ><RegisterIcon /></i>
-                <p className="card-text">Votre premier passage ? Créer votre compte !</p>
-              </div>
-            </div>
-          </Link>
-        </div>
-      </div>
-    )
-  } else {
+  if(connectedUser) {
     return (
       <div className="container-fluid">
         <div className="home-card-container">
@@ -66,6 +41,34 @@ function Home() {
         </div>
       </div>
     )
+    
+  } else {
+    
+    return (
+      <div className="container-fluid">
+        <div className="home-card-container">
+          <Link className="home-card-link" to="/connexion">
+            <div className="home-card">
+              <div className="home-card-body">
+                <h5 className="card-title">Se connecter</h5>
+                <i className="card-icon" ><LoginIcon /></i>
+                <p className="card-text">Se connecter pour accèder à l'application</p>
+              </div>
+            </div>
+          </Link>
+          <Link className="home-card-link" to="/sinscrire">
+            <div className="home-card">
+              <div className="home-card-body">
+                <h5 className="card-title">Créer votre compte</h5>
+                <i className="card-icon" ><RegisterIcon /></i>
+                <p className="card-text">Votre premier passage ? Créer votre compte !</p>
+              </div>
+            </div>
+          </Link>
+        </div>
+      </div>
+    )
+
   }
 
 	

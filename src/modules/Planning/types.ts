@@ -1,5 +1,5 @@
-export interface Planning {
+export interface IPlanning {
   uid: string;
-  length: number;
+  participants: string[];
   date: string;
 }

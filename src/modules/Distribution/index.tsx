@@ -6,12 +6,18 @@ import AlertBox from "../../components/AlertBox";
 import useFirestore from "../../hooks/useFirestore";
 import { Error } from "../../types/Error";
 
-import DistributionCard from "./components/DistributionCard";
+
 import CentreItem from "./components/CentreItem";
 import { CentreDeDistribution } from "./types";
+import DistributionCard from "./components/DistributionCard";
+
+interface ParamTypes {
+  nom: string,
+  jour: string
+}
 
 function Distribution() {
-  const { nom, jour } = useParams();
+  const { nom, jour } = useParams<ParamTypes>();
   const history = useHistory();
 
   const [error, setError] = useState<Error | null>(null);
@@ -29,23 +35,17 @@ function Distribution() {
   useEffect(() => {
     let isCancelled = false;
 
-    setCentreList((prevState) => {
-      return {
-        ...prevState,
-        isProcessing: true,
-        data: [],
-      };
+    setCentreList({
+      isProcessing: true,
+      data: []
     });
 
     getCentreList()
       .then((centres) => {
         if (!isCancelled)
-          setCentreList((prevState) => {
-            return {
-              ...prevState,
-              isProcessing: false,
-              data: centres,
-            };
+          setCentreList({
+            isProcessing: false,
+            data: centres
           });
       })
       .catch((error) => {

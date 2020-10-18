@@ -4,6 +4,7 @@ import AlertBox from '../../../../components/AlertBox';
 import PageLoading from "../../../../components/PageLoading";
 import {UserContext} from "../../../../providers/UserProvider";
 import { CompteDisplayOptions } from '../../utils';
+import {User} from "./../../../../modules/User/types";
 
 interface Props {
   updateState: (displayState: CompteDisplayOptions) => void;
@@ -11,8 +12,8 @@ interface Props {
 
 const DeleteAccount: FC<Props> = ({updateState}) => {
   const {
-    connectedUser: { profil_pic_ref },
-  } = useContext(UserContext);
+    connectedUser: { profil_pic_ref }
+  } = useContext(UserContext as unknown as React.Context<{connectedUser: User;}>);
 
   const [firebaseState, setFirebaseState] = useState({isProcessing: false, message: "", type: ""});
 

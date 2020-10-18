@@ -1,7 +1,7 @@
 import React from 'react';
 import {PlusIcon} from '../../components/Icons';
 
-function PageLoading () {
+function NewPlanningCard () {
 
   return (
     <div className="container-fluid container-80">
@@ -28,4 +28,4 @@ function PageLoading () {
 }
 
 
-export default PageLoading;
+export default NewPlanningCard;

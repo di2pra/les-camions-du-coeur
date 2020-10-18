@@ -1,27 +1,38 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { useHistory, useParams } from "react-router-dom";
 
-import PlanningCard from './components/PlanningCard';
+
 import { UserContext } from "../../providers/UserProvider";
 import PageLoading from '../../components/PageLoading';
-import {capitalize} from '../../components/Helpers';
 import AlertBox from '../../components/AlertBox';
 import useFirestore from '../../hooks/useFirestore';
+import DistributionListContainer from './components/DistributionListContainer';
+
+import { Error } from '../../types/Error';
+import { CentreDeDistribution } from '../Distribution/types';
+import { MemberWithUserInfo } from '../User/types';
+import { IPlanning } from './types';
+import PlanningCard from './components/PlanningCard';
+
+interface ParamTypes {
+  nom: string,
+  jour: string
+}
 
 function Planning() {
 
-  let { nom, jour } = useParams();
+  let { nom, jour } = useParams<ParamTypes>();
   const history = useHistory();
 
   const {connectedUser} = useContext(UserContext);
 
-  const [error, setError] = useState(null);
-  const [userCentreList, setUserCentreList] = useState({isProcessing: null, data: []});
+  const [error, setError] = useState<Error | null>(null);
+  const [userCentreList, setUserCentreList] = useState<{isProcessing: boolean | null; data: CentreDeDistribution[]}>({isProcessing: null, data: []});
 
-  const [selectedCentreIndex, setSelectedCentreIndex] = useState(null);
-  const [selectedCentreDataIsLoading, setSelectedCentreDataIsLoading] = useState(null);
-  const [selectedCentreMemberList, setSelectedCentreMemberList] = useState([]);
-  const [selectedCentrePlanningList, setSelectedCentrePlanningList] = useState([]);
+  const [selectedCentreIndex, setSelectedCentreIndex] = useState<number | null>(null);
+  const [selectedCentreDataIsLoading, setSelectedCentreDataIsLoading] = useState<boolean | null>(null);
+  const [selectedCentreMemberList, setSelectedCentreMemberList] = useState<MemberWithUserInfo[]>([]);
+  const [selectedCentrePlanningList, setSelectedCentrePlanningList] = useState<IPlanning[]>([]);
   
 
   const {
@@ -42,25 +53,27 @@ function Planning() {
       data: []
     });
 
-    getUserCentreList(connectedUser.uid).then((centres) => {
+    if(connectedUser != null) {
+      getUserCentreList(connectedUser.uid).then((centres) => {
 
-      if(!isCancelled) setUserCentreList({
-        isProcessing: false,
-        data: centres
-      })
-
-    }).catch((error) => {
-      if(!isCancelled) setError({
-        type: "error",
-        message: "Erreur lors du chargement des centres : " + error.message
-      })
-    });
+        if(!isCancelled) setUserCentreList({
+          isProcessing: false,
+          data: centres
+        })
+  
+      }).catch((error) => {
+        if(!isCancelled) setError({
+          type: "error",
+          message: "Erreur lors du chargement des centres : " + error.message
+        })
+      });
+    }
 
     return () => {
       isCancelled = true
     }
 
-  }, [connectedUser.uid, getUserCentreList]);
+  }, [connectedUser, getUserCentreList]);
 
 
   useEffect(() => {
@@ -200,41 +213,24 @@ function Planning() {
     
     return (<PageLoading />);
   
-  }  else {
+  }  else if(selectedCentreIndex != null) {
     return (
       <div className="container-fluid container-80">
         <DistributionListContainer centres={userCentreList.data} selectedCentreIndex={selectedCentreIndex} updateSelectedCentre={updateSelectedCentre} />
         {
           selectedCentrePlanningList.map((planning) => {
-            return (<PlanningCard key={planning.date} centre={userCentreList.data[selectedCentreIndex]} planning={planning} membres={selectedCentreMemberList} connectedUser={connectedUser} />)
+            return (connectedUser == null) ? null : (<PlanningCard key={planning.date} centre={userCentreList.data[selectedCentreIndex]} planning={planning} membres={selectedCentreMemberList} connectedUser={connectedUser} />)
           })
         }
       </div>
     )
 
-  }
-
-}
-
-function DistributionListContainer({centres, selectedCentreIndex, updateSelectedCentre}) {
-
-  if(centres.length > 1) {
-    return (
-      <ul className="planning-distribution-list">
-        {
-          centres.map((centre, index) => {
-            return <li onClick={index === selectedCentreIndex ? null : () => {updateSelectedCentre(index)}} className={index === selectedCentreIndex ? 'selected' : ''}  key={index} >{capitalize(centre.nom)} le {centre.jour}</li>;
-          })
-        }
-      </ul>
-    )
-  } else if(centres.length === 0) {
-    return (<AlertBox error={{type: "warning",
-    message: "Vous devez d'abord adhérer à une distribution pour pouvoir consulter son planning."}} />)
   } else {
     return null
   }
-  
+
 }
+
+
 
 export default Planning;

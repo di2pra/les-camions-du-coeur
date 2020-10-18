@@ -1,8 +1,13 @@
-import React from 'react';
+import React, {FC} from 'react';
 
 import UserItem from './UserItem';
+import {User} from "../types";
 
-function UserList({users}) {
+interface Props {
+  users: User[];
+}
+
+const UserList : FC<Props> = ({users}) => {
 
   return (
     <div className="user-list-container">

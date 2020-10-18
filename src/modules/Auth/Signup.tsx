@@ -1,17 +1,19 @@
-import React, {useState, useCallback, useContext} from 'react';
+import React, {useState, useCallback, useContext, FC} from 'react';
 import AlertBox from '../../components/AlertBox';
 import PageLoading from '../../components/PageLoading';
 import useFormValidation from '../../hooks/useFormValidation';
 import { UserContext } from "../../providers/UserProvider";
 import useFireAuth from '../../hooks/useFireAuth';
 import useFirestore from '../../hooks/useFirestore';
+import { Error } from '../../types/Error';
+import { CreateUser } from '../User/types';
 
-function Signup() {
+const Signup : FC<{}> = () => {
 
   const {setAuthListener} = useContext(UserContext);
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   const {createUser} = useFireAuth();
   const {createUtilisateur} = useFirestore();
@@ -24,25 +26,37 @@ function Signup() {
 
     createUser(state.email.value, state.password.value).then((data) => {
 
-      createUtilisateur(data.user.uid, {
-        email: data.user.email,
-        prenom: state.prenom.value,
-        nom: state.nom.value
-      }).then(() => {
+      if(data.user) {
+        createUtilisateur(data.user.uid, {
+          email: data.user.email,
+          prenom: state.prenom.value,
+          nom: state.nom.value
+        } as CreateUser).then(() => {
+  
+          setAuthListener(true);
+  
+        }).catch((error) => {
+  
+          setError({
+            type: 'error',
+            message: error.message
+          });
+  
+          setAuthListener(true);
+          setIsProcessing(false);
+  
+        });
 
-        setAuthListener(true);
-
-      }).catch((error) => {
+      } else {
 
         setError({
           type: 'error',
-          message: error.message
+          message: 'Erreur lors de la création du compte'
         });
 
         setAuthListener(true);
         setIsProcessing(false);
-
-      })
+      }
 
     }).catch((error) => {
 

@@ -1,17 +1,19 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, FC} from 'react';
 import { useHistory } from 'react-router-dom';
 import AlertBox from '../../components/AlertBox';
-import PageLoading from './../../components/PageLoading';
+import PageLoading from '../../components/PageLoading';
 import useFormValidation from '../../hooks/useFormValidation';
 import useFireAuth from '../../hooks/useFireAuth';
+import { Error } from '../../types/Error';
+import { FormSchema } from '../../types/FormSchema';
 
-function Login() {
+const Login: FC<{}> = () => {
 
   // Get the router object
   const history = useHistory();
 
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState(null);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
 
   const {logInUser} = useFireAuth();
 
@@ -33,7 +35,7 @@ function Login() {
     }
   };
 
-  const processLogin = useCallback((state) => {
+  const processLogin = useCallback((state:FormSchema) => {
 
     setIsProcessing(true);
 

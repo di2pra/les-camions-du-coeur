@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {FC} from 'react';
 import { LoadingIcon } from './Icons';
 
-function PageLoading () {
+const PageLoading: FC<{}> = () => {
 
   return (
     <div id="loading-page" className="container-fluid">

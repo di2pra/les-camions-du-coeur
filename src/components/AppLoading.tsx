@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { FC } from 'react';
 
-function AppLoading () {
+
+const AppLoading:FC<{}> = () => {
   return (
   <div className="pageLoading position-fixed align-middle text-center">
     <h2>Chargement...</h2><br />

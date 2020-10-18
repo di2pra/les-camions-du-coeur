@@ -1,9 +1,13 @@
 import { useCallback } from 'react';
 import {  auth } from "../Firebase";
 
+interface FirebaseErrors {
+  [key: string]: string;
+}
+
 function useFireAuth() {
 
-  const firebaseErrors = {
+  const firebaseErrors: FirebaseErrors = {
     'auth/weak-password': 'Le mot de passe est trop faible en terme de sécurité. Veuillez choisir un autre mot de passe.',
     'auth/requires-recent-login': 'Cette opération requiert une session de connexion plus récente, veuillez vous reconnecter pour changer votre mot de passe',
     'auth/invalid-email': 'L\'adresse email est incorrecte.',
@@ -19,7 +23,9 @@ function useFireAuth() {
 
     try {
 
-      await auth.currentUser.updatePassword(password);
+      if(auth.currentUser) {
+        await auth.currentUser.updatePassword(password);
+      }
 
     } catch (error) {
 

@@ -1,18 +1,22 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, FC} from 'react';
 import { useHistory } from 'react-router-dom';
 import { auth } from '../../Firebase';
 import AlertBox from '../../components/AlertBox';
 import PageLoading from '../../components/PageLoading';
 import useFormValidation from '../../hooks/useFormValidation';
 
-function ResetPassword() {
+interface FirebaseErrors {
+  [key: string]: string;
+}
+
+const ResetPassword : FC<{}> = () => {
 
   // Get the router object
   const history = useHistory();
 
   const [firebaseState, setFirebaseState] = useState({isProcessing: false, message: "", type: ""});
 
-  const firebaseErrors = {
+  const firebaseErrors : FirebaseErrors = {
     'auth/invalid-email': 'L\'adresse email est incorrecte.',
     'auth/user-disabled': 'Le compte de cet utilisateur est désactivé.',
     'auth/user-not-found': 'Le compte introuvable avec cette adresse email.'

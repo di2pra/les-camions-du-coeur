@@ -1,9 +1,9 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, FC } from 'react';
 import { auth } from "../../Firebase";
 import PageLoading from '../../components/PageLoading';
 
 
-function Logout(props) {
+const Logout : FC<{}> = () => {
 
   const processSignOut = useCallback(async () => {
 

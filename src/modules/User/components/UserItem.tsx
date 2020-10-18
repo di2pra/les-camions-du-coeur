@@ -1,9 +1,13 @@
-import React from "react";
-
+import React, { FC } from "react";
 import { getUserProfilPicUrl } from "../../../components/Helpers";
+import {User} from "../types";
 
-function UserItem({ user }) {
-  if (typeof user == "undefined") {
+interface Props {
+  user: User | null;
+}
+
+const UserItem : FC<Props> = ({ user }) => {
+  if (user == null) {
     return (
       <div className="user">
         <div className="user-image">

@@ -1,9 +1,14 @@
 import { useState, useCallback } from 'react';
 import {isEmpty} from '../components/Helpers';
+import { FormSchema, ValidationSchema } from '../types/FormSchema';
 
-function useFormValidation(stateSchema, validationSchema = {}, callback) {
+const useFormValidation = (
+  stateSchema: FormSchema,
+  validationSchema:ValidationSchema = {}, 
+  callback: (state: FormSchema) => void
+) => {
 
-  const [state, setState] = useState(stateSchema);
+  const [state, setState] = useState<FormSchema>(stateSchema);
 
   // Used to disable submit button if there's an error in state
   // or the required field in state has no value.
@@ -69,22 +74,24 @@ function useFormValidation(stateSchema, validationSchema = {}, callback) {
       }
 
       // equal match validation
-      if(validationSchema[name].hasToMatch !== null && typeof validationSchema[name].hasToMatch === 'object') {
-        if(
-          state[validationSchema[name].hasToMatch.value].value !== '' &&
-          state[validationSchema[name].hasToMatch.value].value !== value
+      //if(validationSchema[name].hasToMatch !== null && typeof validationSchema[name].hasToMatch === 'object') {
+      if(typeof validationSchema[name].hasToMatch === "object") {
+          if(
+          state[validationSchema[name].hasToMatch!.value].value !== '' &&
+          state[validationSchema[name].hasToMatch!.value].value !== value
         ) {
-          error = validationSchema[name].hasToMatch.error;
+          error = validationSchema[name].hasToMatch!.error;
         }
       }
 
       // regex validation
-      if (
+      /*if (
         validationSchema[name].validator !== null &&
         typeof validationSchema[name].validator === 'object'
-      ) {
-        if (value && !validationSchema[name].validator.regEx.test(value)) {
-          error = validationSchema[name].validator.error;
+      )*/ 
+      if (typeof validationSchema[name].validator === 'object') {
+        if (value && !validationSchema[name].validator!.regEx.test(value)) {
+          error = validationSchema[name].validator!.error;
         }
       }
 
@@ -97,9 +104,9 @@ function useFormValidation(stateSchema, validationSchema = {}, callback) {
       }
 
       // isEqual reset field on update
-      if(validationSchema[name].isEqualTo) {
+      if(typeof validationSchema[name].isEqualTo !== "undefined") {
 
-        const inputName = validationSchema[name].isEqualTo;
+        const inputName = validationSchema[name].isEqualTo!;
         
         newState = {
           ...newState, 

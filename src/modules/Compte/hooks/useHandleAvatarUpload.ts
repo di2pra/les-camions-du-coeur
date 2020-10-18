@@ -3,13 +3,14 @@ import { useState, useCallback } from "react";
 import { storage, firestore } from "../../../Firebase";
 
 import { uuidv4 } from "../../../components/Helpers";
-import { ConnectedUser } from "../../../providers/UserProvider";
+import { User } from "../../User/types";
+import { Error } from "../../../types/Error";
 
 export  const useHandleAvatarUpload = (
-  connectedUser: ConnectedUser,
+  connectedUser: User,
   setProfilPic: (fireBaseUrl: string, cloudRef: string) => void
 ) => {
-  const [error, setError] = useState<{type: string, message: string} | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   const upload = useCallback(
     (imageAsFile: any) => {
