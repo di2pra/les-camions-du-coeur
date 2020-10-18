@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import {DemandeAdhesion} from "../../types";
 import {User} from "../../../User/types";
 import AlertBox from '../../../../components/AlertBox';
@@ -14,26 +14,25 @@ interface Props {
 
 const RegisterSection : FC<Props> = ({connectedUser, onRegisterClick, adhesion, isConnectedUserMember}) => {
 
-  if(connectedUser) {
-    if(isConnectedUserMember) {
-      return null;
-    } else if(adhesion && adhesion.utilisateur === connectedUser.uid) {
-      return <AlertBox error={{type: "info", message: "Votre demande d'adhésion pour cette distribution est en attente de validation par un responsable."}} />
-    } else {
-      return(
-        <section className="register-banner" >
-          <div className="buttons-container">
-            <button type="button" className="btn-animated primary" onClick={(e) => { e.preventDefault(); onRegisterClick();}}>Adhérer à cette distribution</button>
-          </div>
-        </section>
-      )
-    }
-  } else {
-    return null
+  if(!connectedUser) {
+    return null;
   }
 
-  
-  
-}
+  if(isConnectedUserMember) {
+    return null;
+  }
 
-export default RegisterSection;
+  if(adhesion && adhesion.utilisateur === connectedUser.uid) {
+    return <AlertBox error={{type: "info", message: "Votre demande d'adhésion pour cette distribution est en attente de validation par un responsable."}} />;
+  }
+
+  return(
+      <section className="register-banner" >
+        <div className="buttons-container">
+          <button type="button" className="btn-animated primary" onClick={(e) => { e.preventDefault(); onRegisterClick();}}>Adhérer à cette distribution</button>
+        </div>
+      </section>
+    );
+};
+
+export default memo(RegisterSection);

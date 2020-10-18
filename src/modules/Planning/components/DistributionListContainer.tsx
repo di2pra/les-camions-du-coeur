@@ -22,14 +22,14 @@ const DistributionListContainer : FC<Props> = ({centres, selectedCentreIndex, up
           })
         }
       </ul>
-    )
+    );
   } else if(centres.length === 0) {
     return (<AlertBox error={{type: "warning",
-    message: "Vous devez d'abord adhérer à une distribution pour pouvoir consulter son planning."}} />)
+    message: "Vous devez d'abord adhérer à une distribution pour pouvoir consulter son planning."}} />);
   } else {
-    return null
+    return null;
   }
-  
-}
+
+};
 
 export default DistributionListContainer;

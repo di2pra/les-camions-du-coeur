@@ -40,10 +40,10 @@ function Home() {
           </Link>
         </div>
       </div>
-    )
-    
+    );
+
   } else {
-    
+
     return (
       <div className="container-fluid">
         <div className="home-card-container">
@@ -52,7 +52,7 @@ function Home() {
               <div className="home-card-body">
                 <h5 className="card-title">Se connecter</h5>
                 <i className="card-icon" ><LoginIcon /></i>
-                <p className="card-text">Se connecter pour accèder à l'application</p>
+                <p className="card-text">Se connecter pour accèder à l&apos;application</p>
               </div>
             </div>
           </Link>
@@ -67,11 +67,11 @@ function Home() {
           </Link>
         </div>
       </div>
-    )
+    );
 
   }
 
-	
+
 
 }
 

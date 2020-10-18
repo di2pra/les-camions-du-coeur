@@ -21,11 +21,11 @@ const UserProvider: FC = ({children}) => {
   useEffect(() => {
     if(authToListen) {
       const unsubscribe = auth.onAuthStateChanged(async user => {
-        
+
         if (user) {
 
           try {
-            const userData = await firestore.collection('utilisateurs').doc(user.uid).get();       
+            const userData = await firestore.collection('utilisateurs').doc(user.uid).get();
 
             setConnectedUser({
               ...userData.data() as User,
@@ -49,8 +49,8 @@ const UserProvider: FC = ({children}) => {
   }, [authToListen]);
 
   const setProfilPic = (profil_pic: string, cloud_ref: string) => {
-    setConnectedUser((prevState) => ({...prevState as User, profil_pic: profil_pic, profil_pic_ref: cloud_ref}))
-  }
+    setConnectedUser((prevState) => ({...prevState as User, profil_pic: profil_pic, profil_pic_ref: cloud_ref}));
+  };
 
   return (
     authWasListened
@@ -64,6 +64,6 @@ const UserProvider: FC = ({children}) => {
     : <AppLoading />
   );
 
-}
+};
 
 export default UserProvider;

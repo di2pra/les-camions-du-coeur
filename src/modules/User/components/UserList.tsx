@@ -17,7 +17,7 @@ const UserList : FC<Props> = ({users}) => {
         })
       }
     </div>
-  )
+  );
 
 }
 

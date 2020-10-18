@@ -32,19 +32,19 @@ const Signup : FC<{}> = () => {
           prenom: state.prenom.value,
           nom: state.nom.value
         } as CreateUser).then(() => {
-  
+
           setAuthListener(true);
-  
+
         }).catch((error) => {
-  
+
           setError({
             type: 'error',
             message: error.message
           });
-  
+
           setAuthListener(true);
           setIsProcessing(false);
-  
+
         });
 
       } else {
@@ -120,7 +120,11 @@ const Signup : FC<{}> = () => {
     }
   };
 
-  const {state, handleOnChange, handleOnSubmit} = useFormValidation(stateSchema, validationStateSchema, processCreateUser);
+  const {state, handleOnChange, handleOnSubmit} = useFormValidation(
+    stateSchema,
+    validationStateSchema,
+    processCreateUser
+  );
 
 
   if(isProcessing) {
@@ -176,6 +180,6 @@ const Signup : FC<{}> = () => {
     );
   }
 
-}
+};
 
 export default Signup;

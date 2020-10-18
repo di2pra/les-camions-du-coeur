@@ -1,0 +1,76 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "react-app"
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true,
+      "tsx": true,
+      "ts": true
+    },
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "@typescript-eslint"],
+  "settings": {
+    "react": {
+      "version": "detect" // Tells eslint-plugin-react to automatically detect the version of React to use
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".android.js",
+          ".android.jsx",
+          ".ios.js",
+          ".ios.jsx",
+          ".ts",
+          ".tsx",
+          ".android.ts",
+          ".android.tsx",
+          ".ios.ts",
+          ".ios.tsx"
+        ]
+      },
+      "alias": {
+        "map": [
+          ["features", "./src/features"],
+          ["libs", "./src/libs"],
+          ["locales", "./src/locales"],
+          ["types", "./src/types"],
+          ["ui", "./src/ui"]
+        ],
+        "extensions": [".ts", ".tsx", ".js", ".jsx", ".json"]
+      }
+    },
+    "import/ignore": ["node_modules"]
+  },
+  "rules": {
+    "max-len": ["error", { "code": 120, "ignoreStrings": true }],
+    "react/prop-types": "off",
+    "react-native/sort-styles": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "semi": "error",
+    "no-trailing-spaces": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
+    "no-unused-expressions": "off",
+    "@typescript-eslint/no-unused-expressions": ["error"]
+  }
+}

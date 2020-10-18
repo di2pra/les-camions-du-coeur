@@ -4,7 +4,7 @@ import { FormSchema, ValidationSchema } from '../types/FormSchema';
 
 const useFormValidation = (
   stateSchema: FormSchema,
-  validationSchema:ValidationSchema = {}, 
+  validationSchema:ValidationSchema = {},
   callback: (state: FormSchema) => void
 ) => {
 
@@ -27,12 +27,12 @@ const useFormValidation = (
 
         newState = {
           ...newState,
-          [key]: { 
-            value: stateValue, 
-            error: 'Ce champs est obligatoire.', 
-            classValue: 'is-invalid' 
+          [key]: {
+            value: stateValue,
+            error: 'Ce champs est obligatoire.',
+            classValue: 'is-invalid'
           }
-        }
+        };
 
       }
 
@@ -55,7 +55,7 @@ const useFormValidation = (
 
   }, [state, validationSchema]);
 
-  
+
 
   // Used to handle every changes in every input
   const handleOnChange = useCallback(
@@ -88,7 +88,7 @@ const useFormValidation = (
       /*if (
         validationSchema[name].validator !== null &&
         typeof validationSchema[name].validator === 'object'
-      )*/ 
+      )*/
       if (typeof validationSchema[name].validator === 'object') {
         if (value && !validationSchema[name].validator!.regEx.test(value)) {
           error = validationSchema[name].validator!.error;
@@ -96,22 +96,22 @@ const useFormValidation = (
       }
 
       let newState = {
-        [name]: { 
-          value, 
-          error, 
-          classValue: (error === '') ? 'is-valid' : 'is-invalid' 
+        [name]: {
+          value,
+          error,
+          classValue: (error === '') ? 'is-valid' : 'is-invalid'
         }
-      }
+      };
 
       // isEqual reset field on update
       if(typeof validationSchema[name].isEqualTo !== "undefined") {
 
         const inputName = validationSchema[name].isEqualTo!;
-        
+
         newState = {
-          ...newState, 
+          ...newState,
           [inputName]: {}
-        }
+        };
 
       }
 
@@ -139,6 +139,6 @@ const useFormValidation = (
   );
 
   return { state, handleOnChange, handleOnSubmit };
-}
+};
 
 export default useFormValidation;

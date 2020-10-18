@@ -1,12 +1,12 @@
-import React, { useState, useEffect, FC } from 'react';
+import React, { useState, useEffect, FC, memo } from 'react';
 import { capitalize } from '../../../../components/Helpers';
 
 import { CentreDeDistribution } from '../../types';
 
 
 interface Props {
-  centre: CentreDeDistribution; 
-  isConnectedUserResponsable: boolean; 
+  centre: CentreDeDistribution;
+  isConnectedUserResponsable: boolean;
   onSaveCentreDesc: (value: string) => void;
 }
 
@@ -23,16 +23,16 @@ const DistributionDetailSection: FC<Props> = ({centre, isConnectedUserResponsabl
     setState({
       editMode: false,
       value: centre.informations || ''
-    })
+    });
 
-  }, [centre])
+  }, [centre]);
 
   const handleTextValueChange = (event : React.ChangeEvent<HTMLTextAreaElement>) => {
     event.preventDefault();
 
     setState({editMode: true, value: event.target.value});
 
-  }
+  };
 
   const handleEditModeChange = (event : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
@@ -41,16 +41,16 @@ const DistributionDetailSection: FC<Props> = ({centre, isConnectedUserResponsabl
       return {
         ...previousState,
         editMode : !previousState.editMode
-      }
-    })
+      };
+    });
 
-  }
+  };
 
   const onUpdateSaveClick = (event : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     onSaveCentreDesc(state.value);
 
-  }
+  };
 
   if(isConnectedUserResponsable) {
 
@@ -67,12 +67,12 @@ const DistributionDetailSection: FC<Props> = ({centre, isConnectedUserResponsabl
             </div>
           </form>
         </section>
-      )
+      );
 
-      
-  
+
+
     } else {
-  
+
       return (
         <section className="desc-section">
           <h1>Distribution à {capitalize(centre.nom)} le {centre.jour}</h1>
@@ -81,8 +81,8 @@ const DistributionDetailSection: FC<Props> = ({centre, isConnectedUserResponsabl
             <button onClick={handleEditModeChange} type="button" className="btn-animated primary">Modifier</button>
           </div>
         </section>
-      )
-  
+      );
+
     }
 
   } else {
@@ -92,11 +92,11 @@ const DistributionDetailSection: FC<Props> = ({centre, isConnectedUserResponsabl
         <h1>Distribution à {capitalize(centre.nom)} le {centre.jour}</h1>
         <p>{state.value === "" ? 'Aucune information' : state.value }</p>
       </section>
-    )
+    );
 
   }
 
-  
-}
 
-export default DistributionDetailSection;
+};
+
+export default memo(DistributionDetailSection);

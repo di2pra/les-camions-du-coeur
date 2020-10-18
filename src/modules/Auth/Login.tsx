@@ -80,13 +80,13 @@ const Login: FC<{}> = () => {
               <div className="buttons-container">
                 <button type="submit" className="btn-animated primary" >Se connecter</button>
                 <button onClick={(e) => history.push('/reinit-mdp')} type="button" className="btn-animated secondary" >Mot de passe oublié ?</button>
-                <button onClick={(e) => history.push('/sinscrire')} type="button" className="btn-animated secondary" >S'inscrire</button>
+                <button onClick={(e) => history.push('/sinscrire')} type="button" className="btn-animated secondary">S&apos;inscrire</button>
               </div>
             </form>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
 }

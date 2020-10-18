@@ -7,13 +7,13 @@ export interface CentreDeDistribution {
   informations?:string;
 }
 
-export interface DemandeAdhesion extends CreateDemandeAdhesion {
-  uid: string;
-}
-
 export interface CreateDemandeAdhesion {
   centre: string,
   utilisateur: string;
+}
+
+export interface DemandeAdhesion extends CreateDemandeAdhesion {
+  uid: string;
 }
 
 export interface DemandeAdhesionWithUserInfo extends User {

@@ -1,17 +1,16 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import UserList from '../../../User/components/UserList';
 import { MemberWithUserInfo } from '../../../User/types';
+import { MemberType } from '../../../Membership/types';
 
 
 interface Props {
   membres: MemberWithUserInfo[]
 }
 
-
-
 const ResponsableSection : FC<Props> = ({membres}) => {
 
-  const responsables = membres.filter((membre) => {return membre.type === "responsable"});
+  const responsables = membres.filter((membre) => membre.type === MemberType.RESPONSABLE);
 
   const sectionContent = (responsables.length > 0) ? <UserList users={responsables} /> : <p>Aucun responsable</p>;
 
@@ -20,7 +19,7 @@ const ResponsableSection : FC<Props> = ({membres}) => {
       <h1>Responsable(s)</h1>
       {sectionContent}
     </section>
-  )
-}
+  );
+};
 
-export default ResponsableSection;
+export default memo(ResponsableSection);

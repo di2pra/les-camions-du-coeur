@@ -10,8 +10,9 @@ const Logout : FC<{}> = () => {
     try {
       await auth.signOut();
     } catch (error) {
+      //
     }
-    
+
   }, []);
 
 	useEffect(() => {

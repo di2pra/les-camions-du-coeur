@@ -33,7 +33,7 @@ function Compte() {
     displayProfilUpdateFrom
   );
 
-  const renderContent = useCallback(() => {
+  const renderContent: () => JSX.Element | undefined = useCallback(() => {
     let contains;
     if (display === CompteDisplayOptions.MENU) {
       contains = (
@@ -48,7 +48,7 @@ function Compte() {
     }
 
     return contains;
-  }, [display, updateState, loadCroppie]); 
+  }, [display, updateState, loadCroppie, CroppieDomContainer]);
 
   return (
     <div id="account-management">

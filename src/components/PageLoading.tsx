@@ -9,8 +9,8 @@ const PageLoading: FC<{}> = () => {
         <LoadingIcon/>
       </div>
     </div>
-  )
-  
+  );
+
 }
 
 

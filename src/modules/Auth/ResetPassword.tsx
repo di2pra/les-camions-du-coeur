@@ -28,23 +28,23 @@ const ResetPassword : FC<{}> = () => {
       await auth.sendPasswordResetEmail(state.email.value);
 
       setFirebaseState(prevData => ({
-        ...prevData, 
+        ...prevData,
         ...{message: "Un email avec un lien pour réinitiliser votre mot de passe a été envoyé.", type: "success"}
-      }))
+      }));
 
     } catch (error) {
 
       setFirebaseState(prevData => ({
-        ...prevData, 
+        ...prevData,
         ...{message: firebaseErrors[error.code] || error.message, type: "error"}
-      }))
+      }));
 
     }
 
     setFirebaseState(prevData => ({
-      ...prevData, 
+      ...prevData,
       ...{isProcessing: false}
-    }))
+    }));
 
   }, []);
 
@@ -62,7 +62,11 @@ const ResetPassword : FC<{}> = () => {
     }
   };
 
-  const {state, handleOnChange, handleOnSubmit} = useFormValidation(stateSchema, validationStateSchema, processResetPassword);
+  const {state, handleOnChange, handleOnSubmit} = useFormValidation(
+    stateSchema,
+    validationStateSchema,
+    processResetPassword
+  );
 
   if(firebaseState.isProcessing) {
     return <PageLoading />;
@@ -74,13 +78,13 @@ const ResetPassword : FC<{}> = () => {
             <AlertBox error={firebaseState} />
             <form  onSubmit={handleOnSubmit}>
               <div className="buttons-container">
-                <button onClick={(e) => history.push('/')} type="button" className="btn-animated primary" >Retourner à la page d'Accueil</button>
+                <button onClick={(e) => history.push('/')} type="button" className="btn-animated primary" >Retourner à la page d&apos;Accueil</button>
               </div>
             </form>
           </div>
         </div>
       </div>
-    )
+    );
   } else {
     return (
       <div id="reset-password-page" className="container-fluid">
@@ -100,10 +104,10 @@ const ResetPassword : FC<{}> = () => {
           </div>
         </div>
       </div>
-    )
+    );
   }
-  
 
-}
+
+};
 
 export default ResetPassword;

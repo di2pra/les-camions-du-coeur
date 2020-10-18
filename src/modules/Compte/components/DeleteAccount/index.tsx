@@ -52,9 +52,9 @@ const DeleteAccount: FC<Props> = ({updateState}) => {
     }
 
     setFirebaseState(prevData => ({
-      ...prevData, 
+      ...prevData,
       ...{isProcessing: false}
-    }))
+    }));
 
   }, [profil_pic_ref]);
 
@@ -101,6 +101,6 @@ const DeleteAccount: FC<Props> = ({updateState}) => {
       </div>
     </div>
   );
-}
+};
 
 export default DeleteAccount;
