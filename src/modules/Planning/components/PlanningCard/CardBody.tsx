@@ -32,7 +32,7 @@ const CardBody: FC<Props> = ({distribution, participantList, error}) => {
   } else if(distribution.data.participants.length === 0) {
     return(
       <div className="planning-card-body">
-        <h3>Aucun Participant</h3>
+        <h3 className="message">Aucun Participant</h3>
       </div>
     )
   } else {

@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import  {FC} from 'react';
 import { IPlanning } from './../../types';
 
 
@@ -12,14 +12,15 @@ const CardFooter: FC<Props> = ({distribution}) => {
   if(distribution.isProcessing || distribution.data.participants.length === 0) {
     return (null)
   } else {
-    return (
+    /*return (
     <div className="planning-card-footer">
       <div className="kpi-container">
         <h2># Participants</h2>
         <h1>{distribution.data.participants.length}</h1>
       </div>
     </div>
-  )
+  )*/
+      return null;
   }
 }
 

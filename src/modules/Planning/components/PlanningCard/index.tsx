@@ -7,6 +7,7 @@ import { Error } from '../../../../types/Error';
 import CardHeader from './CardHeader';
 import CardBody from './CardBody';
 import CardFooter from './CardFooter';
+import useIsMounted from '../../../../components/IsMounted';
 
 interface Props {
   planning: IPlanning, 
@@ -17,6 +18,7 @@ interface Props {
 
 const PlanningCard : FC<Props> = ({planning, connectedUser, centre, membres}) => {
 
+  const isMounted = useIsMounted();
   const [error, setError] = useState<Error | null>(null);
   const [distribution, setDistributionData] = useState<{isProcessing: boolean; data: IPlanning}>({isProcessing: false, data: planning});
   const [participantList, setParticipantList] = useState<MemberWithUserInfo[]>([]);
@@ -36,7 +38,7 @@ const PlanningCard : FC<Props> = ({planning, connectedUser, centre, membres}) =>
 
     updatePlanningParticipant(centre.uid, connectedUser.uid, distribution.data.uid, distribution.data.participants).then((distribution) => {
 
-      setDistributionData((prevState) => {
+      if(isMounted.current) setDistributionData((prevState) => {
         return {
           ...prevState,
           isProcessing: false,
@@ -53,7 +55,7 @@ const PlanningCard : FC<Props> = ({planning, connectedUser, centre, membres}) =>
 
     });
     
-  }, [updatePlanningParticipant, centre.uid, connectedUser.uid, distribution.data.uid, distribution.data.participants]);
+  }, [updatePlanningParticipant, isMounted, centre.uid, connectedUser.uid, distribution.data.uid, distribution.data.participants]);
 
 
   useEffect(() => {

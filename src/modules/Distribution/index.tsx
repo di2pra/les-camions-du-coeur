@@ -88,24 +88,26 @@ function Distribution() {
       </div>
     );
   }
-  
-  if (centreList.isProcessing === true) {
+
+  if (centreList.isProcessing === true || centreList.isProcessing == null || (jour != null && nom != null && selectedCentre == null)) {
     return <PageLoading />;
   }
-  
-  if (selectedCentre == null) {
-    return (
-      <div className="container-fluid">
-        <div className="home-card-container">
-          {centreList.data.map((centre) => {
-            return <CentreItem key={centre.uid} centre={centre} />;
-          })}
-        </div>
-      </div>
-    );
+
+  if (selectedCentre !== null) {
+    return <DistributionCard centre={selectedCentre} />;
   }
+
+  return (
+    <div className="container-fluid">
+      <div className="home-card-container">
+        {centreList.data.map((centre) => {
+          return <CentreItem key={centre.uid} centre={centre} />;
+        })}
+      </div>
+    </div>
+  );
   
-  return <DistributionCard centre={selectedCentre} />;
+  
 }
 
 export default Distribution;

@@ -16,15 +16,6 @@ const Compte = lazy(() => import('./modules/Compte'));
 const ResetPassword = lazy(() => import('./modules/Auth/ResetPassword'));
 const PageNotFound = lazy(() => import('./modules/PageNotFound'));
 
-/*function slowImport(value: Promise<{
-  default: React.ComponentType<any>;
-}>, ms = 5000) {
-  return new Promise<{
-    default: React.ComponentType<any>;
-}>(resolve => {
-    setTimeout(() => resolve(value), ms);
-  });
-}*/
 
 function App() {
   const {connectedUser} = useContext(UserContext);

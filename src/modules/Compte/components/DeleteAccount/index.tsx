@@ -1,14 +1,19 @@
 import React, {useState, useCallback, useContext, FC} from 'react';
-import { auth, firestore, storage, FirebaseError, FirebaseErrors } from '../../../../Firebase';
+import { auth, firestore, storage } from '../../../../Firebase';
 import AlertBox from '../../../../components/AlertBox';
 import PageLoading from "../../../../components/PageLoading";
 import {UserContext} from "../../../../providers/UserProvider";
 import { CompteDisplayOptions } from '../../utils';
 import {User} from "./../../../../modules/User/types";
+import { FirebaseErrors } from '../../../../types/Error';
 
 interface Props {
   updateState: (displayState: CompteDisplayOptions) => void;
 }
+
+const firebaseErrors : FirebaseErrors = {
+  'auth/requires-recent-login': 'Cette opération requiert une session de connexion plus récente, veuillez vous reconnecter pour changer votre mot de passe'
+};
 
 const DeleteAccount: FC<Props> = ({updateState}) => {
   const {
@@ -40,12 +45,15 @@ const DeleteAccount: FC<Props> = ({updateState}) => {
         ...prevData,
         ...{ message: "Votre a été supprimé avec succès.", type: "success" },
       }));
+
     } catch (error) {
-      const firebaseError = error as FirebaseError;
+
+      //const firebaseError = error as FirebaseError;
+
       setFirebaseState((prevData) => ({
         ...prevData,
         ...{
-          message: FirebaseErrors[firebaseError.code] || firebaseError.message,
+          message: firebaseErrors[error.code] || error.message,
           type: "error",
         },
       }));

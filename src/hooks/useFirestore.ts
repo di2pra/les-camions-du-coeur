@@ -228,7 +228,6 @@ function useFirestore() {
 
   const updatePlanningParticipant = useCallback(async (centreUid : string, userUid : string, distributionUid : string, participants : string[] = []) : Promise<IPlanning> => {
 
-
     // if the user is already registered, then remove him
     if(((participants).includes(userUid))) {
       await firestore.collection("centres").doc(centreUid).collection("distributions").doc(distributionUid).update({

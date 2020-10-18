@@ -1,5 +1,6 @@
 import React, { FC} from 'react';
 import { capitalize } from '../../../../components/Helpers';
+import { PeopleIcon } from '../../../../components/Icons';
 import { CentreDeDistribution } from '../../../Distribution/types';
 import { User } from '../../../User/types';
 import { IPlanning } from '../../types';
@@ -28,11 +29,20 @@ const CardHeader : FC<Props> = ({distribution, connectedUser, onUpdateClick, cen
     }
   }
 
-  let date = new Intl.DateTimeFormat('fr-FR', options).format(new Date(distribution.data.date))
+  const date = new Intl.DateTimeFormat('fr-FR', options).format(new Date(distribution.data.date))
+
+  const nbrParticipants = distribution.data.participants.length;
 
   return(
     <div className="planning-card-header">
-      <h5>{capitalize(centre.nom)} - {date}</h5>
+      <div className="header-title">
+        <h4>{capitalize(centre.nom)} - {date}</h4>
+        <div className="header-sub-title">
+          <i><PeopleIcon /></i>
+          <h5>{nbrParticipants} {(nbrParticipants <=1) ? 'participant' : 'participants'}</h5>
+        </div>
+      </div>
+      
       {button(distribution.isProcessing)}
     </div>
   )

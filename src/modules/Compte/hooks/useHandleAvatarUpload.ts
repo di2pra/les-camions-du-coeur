@@ -1,7 +1,5 @@
 import { useState, useCallback } from "react";
-
 import { storage, firestore } from "../../../Firebase";
-
 import { uuidv4 } from "../../../components/Helpers";
 import { User } from "../../User/types";
 import { Error } from "../../../types/Error";
@@ -20,10 +18,10 @@ export  const useHandleAvatarUpload = (
       uploadTask.on(
         "state_changed",
         null,
-        (erro) => {
+        (error) => {
           setError({
             type: "error",
-            message: erro.message,
+            message: error.message,
           });
         },
         () => {
@@ -38,22 +36,27 @@ export  const useHandleAvatarUpload = (
                   profil_pic_ref: cloudRef,
                 },
                 { merge: true }
-              );
+              ).then(() => {
 
-              // delete the existing pic
-              if (connectedUser.profil_pic_ref) {
-                storage
+                // delete the existing pic
+                if (connectedUser.profil_pic_ref) {
+                  storage
                   .ref()
                   .child(connectedUser.profil_pic_ref)
-                  .delete()
-                  .then(function () {})
-                  .catch(function (error) {
-                    // Uh-oh, an error occurred!
-                  });
-              }
+                  .delete();
+                }
 
-              // update the current session profil pic of the user
-              setProfilPic(fireBaseUrl, cloudRef);
+                // update the current session profil pic of the user
+                setProfilPic(fireBaseUrl, cloudRef);
+
+              }).catch((error) => {
+                setError({
+                  type: "error",
+                  message: error.message,
+                });
+              });
+
+              
             });
         }
       );

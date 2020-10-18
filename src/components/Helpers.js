@@ -1,7 +1,8 @@
 export function isEmpty(obj) {
-  for(var key in obj) {
-      if(obj.hasOwnProperty(key))
-          return false;
+  for(const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      return false;
+    }
   }
   return true;
 }
@@ -16,24 +17,24 @@ export function uuidv4() {
 export function daysGenerator(jour) {
   let days = [null, null, null, null, null];
 
-  let jourDeSemaine = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
+  const jourDeSemaine = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
 
-  let today = new Date();
+  const today = new Date();
   today.setDate(today.getDate() + (jourDeSemaine.indexOf(jour) + 7 - today.getDay()) % 7);
 
   days = days.map((day, index) => {
-    var dat = new Date(today);
+    const dat = new Date(today);
     dat.setDate(dat.getDate() + index*7);
     return dat.toISOString().split("T")[0];
   });
-  
+
   return days;
 }
 
 
 export function capitalize(s) {
-  if (typeof s !== 'string') return ''
-  return s.charAt(0).toUpperCase() + s.slice(1)
+  if (typeof s !== 'string') return '';
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 export function getUserProfilPicUrl(user) {

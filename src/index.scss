@@ -1,4 +1,5 @@
 // preprocessor variables
+$responsive-width-xs: 370px;
 $responsive-width-s: 576px;
 $responsive-width-m: 768px;
 $responsive-width-l: 992px;
@@ -194,7 +195,7 @@ button:focus {
   grid-template-columns: repeat(1, 1fr);
   grid-auto-rows: 1fr;
 
-  @media (min-width: var(--responsive-width-s)) {
+  @media (min-width: $responsive-width-s) {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -305,7 +306,7 @@ button:focus {
   
     .planning-card-header {
       background-color: $base-color;
-      padding: 1rem;
+      padding: 0.8rem;
       border-radius: calc(.5rem - 1px) calc(.5rem - 1px) 0 0;
   
   
@@ -316,25 +317,76 @@ button:focus {
       @media (min-width: $responsive-width-l) {
         flex-flow: row nowrap;
       }
-  
-  
-      h5 {
-        font-size: 1rem;
+
+      .header-title {
+        flex-grow: 1;
         color: white;
         text-align: center;
-        padding: 2.5px 0 20px 0;
-        
-      
-  
-        flex-grow: 1;
-  
+
         @media (min-width: $responsive-width-l) {
-          font-size: 1.5rem;
           text-align: left;
-          padding: 2.5px 0;
         }
-  
+
+
+        h4 {
+          font-size: 1rem;
+          padding: 2.5px 0 5px 0;
+          
+    
+          @media (min-width: $responsive-width-l) {
+            font-size: 1.5rem;
+            padding: 2.5px 0;
+          }
+    
+        }
+
+        .header-sub-title {
+
+          display: flex;
+          align-items: center;
+          flex-flow: row nowrap;
+          padding-bottom: 10px;
+          justify-content: center;
+
+
+          @media (min-width: $responsive-width-l) {
+            padding: 0;
+            justify-content: right;
+          }
+          
+
+          i {
+            width: 1.4rem;
+            height: 1.4rem;
+            margin: 5px 10px 5px 0;
+
+
+            @media (min-width: $responsive-width-l) {
+              width: 2rem;
+              height: 2rem;
+            }
+            
+
+          }
+
+          h5 {
+            font-size: 0.8rem;
+            display: inline-block;
+      
+            @media (min-width: $responsive-width-l) {
+              font-size: 1.3rem;
+            }
+      
+          }
+
+        }
+
+        
+
       }
+  
+  
+      
 
   
     }
@@ -870,6 +922,13 @@ button:focus {
 
   section {
     margin-bottom: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+
+    @media (min-width: $responsive-width-s) {
+      margin-left: 0px;
+      margin-right: 0px;
+    }
 
     h1 {
       color: $base-color;
@@ -887,7 +946,7 @@ button:focus {
     grid-template-columns: repeat(1, 1fr);
     grid-auto-rows: 1fr;
 
-    @media (min-width: var(--responsive-width-s)) {
+    @media (min-width: $responsive-width-s) {
       grid-template-columns: repeat(2, 1fr);
     }
 
@@ -991,6 +1050,10 @@ button:focus {
   grid-template-columns: repeat(1, 1fr);
   grid-auto-rows: 1fr;
 
+  @media (min-width: $responsive-width-xs) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   @media (min-width: $responsive-width-s) {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -1002,6 +1065,11 @@ button:focus {
 
   // Large devices (desktops, 992px and up)
   @media (min-width: $responsive-width-l) { 
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  // Large devices (desktops, 992px and up)
+  @media (min-width: $responsive-width-xl) { 
     grid-template-columns: repeat(6, 1fr);
   }
 
@@ -1014,10 +1082,10 @@ button:focus {
     align-content: flex-start;
     align-items: center;
 
-    @media (min-width: $responsive-width-s) {
+    //@media (min-width: $responsive-width-s) {
       padding: 0.5rem;
       text-align: center;
-    }
+    //}
 
 
     .user-name {
@@ -1028,41 +1096,60 @@ button:focus {
         margin: 0;
         color: $base-color;
 
-        @media (min-width: $responsive-width-s) {
+        //@media (min-width: $responsive-width-s) {
           margin-top: 5px;
-        }
+        //}
 
       }
     }
 
     .user-image {
 
-      width: 2.5rem;
+      //width: 2.5rem;
       height: 2.5rem;
       margin-right: 15px;
 
-      @media (min-width: $responsive-width-s) {
+      //@media (min-width: $responsive-width-s) {
         width: 100%;
         height: 4rem;
         margin-right: 0px;
-      }
+      //}
 
       .user-image-content {
-        width: 100%;
-        height: 100%;
+        //width: 100%;
+        //height: 100%;
         border-radius: 50%;
         display: inline-block;
         background-repeat:no-repeat;
         background-position: center center;
         background-size: cover;
+        position: relative;
 
-        @media (min-width: $responsive-width-s) {
+        //@media (min-width: $responsive-width-s) {
           width: 4rem;
           height: 4rem;
-        }
+        //}
+
+        
 
       }
       
+    }
+
+    &.user-responsable {
+      .user-image {
+        .user-image-content {
+          &::after {
+            content: "Resp.";
+            background-color: $base-color;
+            padding: 0px 4px;
+            color: white;
+            border-radius: 5px;
+            position: absolute;
+            bottom: -5px;
+          }
+        }
+      }
     }
 
   }
