@@ -4,12 +4,10 @@ import { firestore, firebaseApp } from "../Firebase";
 import {daysGenerator} from "../components/Helpers";
 import {
   CentreDeDistribution,
-  CreateDemandeAdhesion,
   DemandeAdhesion,
-  DemandeAdhesionWithUserInfo
 } from "../modules/Distribution/types";
 import { IPlanning } from '../modules/Planning/types';
-import { User, Member, MemberWithUserInfo, CreateUser } from "../modules/User/types";
+import { User, MemberWithUserInfo, CreateUser } from "../modules/User/types";
 
 function useFirestore() {
 
@@ -25,84 +23,56 @@ function useFirestore() {
 
   }, []);
 
-  const getCentreDemandeAdhesionWithUserInfoList = useCallback(async (centreUid:string) : Promise<DemandeAdhesionWithUserInfo[]> => {
+  const getCentreDemandeAdhesionWithUserInfoList = useCallback(async (postulants: [string]) : Promise<User[]> => {
 
-    let demandeAdhesionList: DemandeAdhesion[] = [];
-    let demandeAdhesionWithUserInfoList: DemandeAdhesionWithUserInfo[] = [];
-      
-
-    const demandeAdhesionListRef = await firestore.collection("demandeAdhesion").where("centre", "==", centreUid).get();
-    
-    demandeAdhesionList = demandeAdhesionListRef.docs.map((doc) => {
-      return { ...doc.data(), uid: doc.id } as DemandeAdhesion;
-    });
-
-    if(demandeAdhesionList.length > 0) {
-
-      const listUserIds = demandeAdhesionList.map(adhesion => {return adhesion.utilisateur});
-
-      let i,j,temparray,chunk = 10;
-      for (i=0,j=listUserIds.length; i<j; i+=chunk) {
-        
-        temparray = listUserIds.slice(i,i+chunk);
-
-        // retrieve users details of demande Adhesion
-        const demandeAdhesionUserDetailsRef = await firestore.collection("utilisateurs").where(firebaseApp.firestore.FieldPath.documentId(), "in", temparray).get();
-
-        demandeAdhesionUserDetailsRef.docs.forEach((doc) => {
-
-          const selectedUserDemandeAdhesion = demandeAdhesionList.find((demandeAdhesin) => { return (demandeAdhesin.utilisateur === doc.id)});
-
-          if (selectedUserDemandeAdhesion) {
-            demandeAdhesionWithUserInfoList.push({
-              ...doc.data(),
-              uid: doc.id,
-              demandeAdhesionUid: selectedUserDemandeAdhesion.uid,
-              demandeAdhesionCentre: selectedUserDemandeAdhesion.centre
-            } as DemandeAdhesionWithUserInfo);
-          }
-        })
-
-      }
-
-    }
-
-    return demandeAdhesionWithUserInfoList;
-
-  }, []);
-
-  const getCentreMembreList = useCallback(async (centreUid:string): Promise<MemberWithUserInfo[]> => {
-    let membreList: Member[] = [];
-    let membreDetailsList: MemberWithUserInfo[] = [];
-
-    // retrieve membres id and type
-    const membresRef = await firestore.collection("centres").doc(centreUid).collection("membres").get();
-
-    membreList = membresRef.docs.map((doc) => {
-      return ({...doc.data(), uid: doc.id} as Member);
-    });
+    let postulantDetailsList: User[] = [];
 
     // retrieve membre details
-    if(membreList.length > 0) {
-      const membreListIds = membreList.map((membre) => {return membre.utilisateur});
+    if(postulants.length > 0) {
 
       let i,j,temparray,chunk = 10;
-      for (i=0,j=membreListIds.length; i<j; i+=chunk) {
+      for (i=0,j=postulants.length; i<j; i+=chunk) {
         
-        temparray = membreListIds.slice(i,i+chunk);
+        temparray = postulants.slice(i,i+chunk);
 
         const membreDetailsRef = await firestore.collection("utilisateurs").where(firebaseApp.firestore.FieldPath.documentId(), "in", temparray).get();
     
         membreDetailsRef.forEach((doc) => {
 
-          const selectedUserMembre = membreList.find((membre) => { return (membre.utilisateur === doc.id)});
+          postulantDetailsList.push({
+            ...doc.data() as User,
+            uid: doc.id
+          } as User);
 
+        });
+      }
+    }
+
+    return postulantDetailsList;
+    
+
+  }, []);
+
+  const getCentreMembreList = useCallback(async (participants: string[], responsables: string[]): Promise<MemberWithUserInfo[]> => {
+
+    let membreDetailsList: MemberWithUserInfo[] = [];
+
+    // retrieve membre details
+    if(participants.length > 0) {
+
+      let i,j,temparray,chunk = 10;
+      for (i=0,j=participants.length; i<j; i+=chunk) {
+        
+        temparray = participants.slice(i,i+chunk);
+
+        const membreDetailsRef = await firestore.collection("utilisateurs").where(firebaseApp.firestore.FieldPath.documentId(), "in", temparray).get();
+    
+        membreDetailsRef.forEach((doc) => {
 
           membreDetailsList.push({
             ...doc.data() as User,
             uid: doc.id,
-            memberUid: selectedUserMembre?.uid,
-            type: selectedUserMembre?.type
+            type: responsables.includes(doc.id) ? 'responsable' : 'membre'
           } as MemberWithUserInfo);
 
         });
@@ -115,19 +85,11 @@ function useFirestore() {
   const getUserCentreList = useCallback(async (userUid:string): Promise<CentreDeDistribution[]> => {
     let userCentres: CentreDeDistribution[] = [];
 
-    const membresRef = await firestore.collectionGroup("membres").where("utilisateur", "==", userUid).get();
+    const centresRef = await firestore.collection("centres").where("participants", "array-contains", userUid).get();
 
-    const centreIds = membresRef.docs.map((membreRef) => {
-      return membreRef.ref.parent.parent?.id || ''
+    userCentres = centresRef.docs.map((centre) => {
+      return {...centre.data(), uid: centre.id} as CentreDeDistribution
     });
-
-    if(centreIds.length>0) {
-      const centresRef = await firestore.collection("centres").where(firebaseApp.firestore.FieldPath.documentId(), "in", centreIds).get();
-
-      userCentres = centresRef.docs.map((centre) => {
-        return {...centre.data(), uid: centre.id} as CentreDeDistribution
-      });
-    }
 
     return userCentres;
   }, [])
@@ -135,10 +97,9 @@ function useFirestore() {
   const getCentrePlanning = useCallback(async (centre:CentreDeDistribution) : Promise<IPlanning[]> => {
 
     const today = (new Date()).toISOString().split("T")[0];
-    let planningRef = await firestore.collection("centres")
-      .doc(centre.uid)
-      .collection("distributions")
+    let planningRef = await firestore.collection("plannings")
       .where("date", ">=", today)
+      .where("centre", "==", centre.uid)
       .orderBy("date")
       .limit(5)
       .get();
@@ -162,6 +123,7 @@ function useFirestore() {
 
       let distributionToCreate = days.map((value) => {
         return {
+          centre: centre.uid,
           date: value,
           participants: []
         }
@@ -171,14 +133,14 @@ function useFirestore() {
       var batch = firestore.batch();
 
       distributionToCreate.forEach((dist) => {
-        var docToCreate = firestore.collection("centres").doc(centre.uid).collection("distributions").doc();
+        var docToCreate = firestore.collection("plannings").doc();
         batch.set(docToCreate, dist)
       })
 
       // Commit the batch
       await batch.commit();
 
-      let planningRef = await firestore.collection("centres").doc(centre.uid).collection("distributions").where("date", ">=", today).orderBy("date").limit(5).get();
+      let planningRef = await firestore.collection("plannings").where("date", ">=", today).where("centre", "==", centre.uid).orderBy("date").limit(5).get();
 
       planningList = planningRef.docs.map((doc)  => {
         return { ...doc.data(), uid: doc.id } as IPlanning;
@@ -199,22 +161,29 @@ function useFirestore() {
 
   }, []);
 
-  const updateCentre = useCallback(async (centre : CentreDeDistribution): Promise<CentreDeDistribution> => {
+  const updateCentreInformation = useCallback(async (centreUid: string, informations : string): Promise<CentreDeDistribution> => {
 
-    await firestore.collection("centres").doc(centre.uid).update(centre);
+    await firestore.collection("centres").doc(centreUid).update({
+      informations: informations
+    });
 
-    let centreRef  = await firestore.collection("centres").doc(centre.uid).get();
+    let centreRef  = await firestore.collection("centres").doc(centreUid).get();
 
     return {...centreRef.data(), uid: centreRef.id} as CentreDeDistribution;
 
   }, []);
 
-  const createDemandeAdhesion = useCallback(async(demandeAdhesion: CreateDemandeAdhesion) : Promise<DemandeAdhesion> => {
-    
+  const addDemandeAdhesion = useCallback(async(userUid: string, centreUid: string) : Promise<CentreDeDistribution> => {
 
-    let demandeAdhesionRef = await firestore.collection('demandeAdhesion').add(demandeAdhesion);
+    await firestore.collection("centres").doc(centreUid).update(
+      {
+        postulants: firebaseApp.firestore.FieldValue.arrayUnion(userUid)
+      }
+    );
 
-    return {...demandeAdhesion,  uid: demandeAdhesionRef.id};
+    const centreDoc = await firestore.collection("centres").doc(centreUid).get();
+
+    return {...centreDoc.data(), uid: centreDoc.id} as CentreDeDistribution;
 
   }, []);
 
@@ -226,30 +195,69 @@ function useFirestore() {
 
   }, []);
 
-  const updatePlanningParticipant = useCallback(async (centreUid : string, userUid : string, distributionUid : string, participants : string[] = []) : Promise<IPlanning> => {
+  const updatePlanningParticipant = useCallback(async (userUid : string, planningUid : string, participants : string[] = []) : Promise<IPlanning> => {
 
     // if the user is already registered, then remove him
     if(((participants).includes(userUid))) {
-      await firestore.collection("centres").doc(centreUid).collection("distributions").doc(distributionUid).update({
+
+      await firestore.collection("plannings").doc(planningUid).update({
         participants: firebaseApp.firestore.FieldValue.arrayRemove(userUid)
       });
 
     // else add him
     } else {
-      await firestore.collection("centres").doc(centreUid).collection("distributions").doc(distributionUid).update({
+
+      await firestore.collection("plannings").doc(planningUid).update({
         participants: firebaseApp.firestore.FieldValue.arrayUnion(userUid)
       });
+
     }
     
-    const distributionRef = await firestore.collection("centres").doc(centreUid).collection("distributions").doc(distributionUid).get();
+    const planningRef = await firestore.collection("plannings").doc(planningUid).get();
 
-    return {...distributionRef.data(), uid: distributionRef.id} as IPlanning
+    return {...planningRef.data(), uid: planningRef.id} as IPlanning
 
   }, []);
 
-  const deleteDemandeAdhesion = useCallback(async (demandeAdhesionUid : string): Promise<void> => {
+  const deleteDemandeAdhesion = useCallback(async (userUid : string, centreUid: string): Promise<CentreDeDistribution> => {
 
-    await firestore.collection("demandeAdhesion").doc(demandeAdhesionUid).delete();
+    await firestore.collection("centres").doc(centreUid).update(
+      {
+        postulants: firebaseApp.firestore.FieldValue.arrayRemove(userUid)
+      }
+    );
+
+    const centreDoc = await firestore.collection("centres").doc(centreUid).get();
+
+    return {...centreDoc.data(), uid: centreDoc.id} as CentreDeDistribution;
+
+  }, []);
+
+  const addUserToCentre = useCallback(async (userUid: string, centreUid: string) : Promise<CentreDeDistribution> => {
+
+
+    await firestore.collection("centres").doc(centreUid).update(
+      {
+        participants: firebaseApp.firestore.FieldValue.arrayUnion(userUid),
+        postulants: firebaseApp.firestore.FieldValue.arrayRemove(userUid)
+      }
+    );
+
+    const centreDoc = await firestore.collection("centres").doc(centreUid).get();
+
+    return {...centreDoc.data(), uid: centreDoc.id} as CentreDeDistribution;
+
+
+  }, []);
+
+  const getUserById = useCallback(async(userUid: string) : Promise<User> => {
+
+    const userRef = await firestore.collection('utilisateurs').doc(userUid).get();
+
+    return {
+      ...userRef.data(),
+      uid: userRef.id
+    } as User
 
   }, [])
 
@@ -260,11 +268,13 @@ function useFirestore() {
     getUserCentreList,
     getCentrePlanning,
     getCentreList,
-    updateCentre,
-    createDemandeAdhesion,
+    updateCentreInformation,
+    addDemandeAdhesion,
     createUtilisateur,
     updatePlanningParticipant,
-    deleteDemandeAdhesion
+    deleteDemandeAdhesion,
+    addUserToCentre,
+    getUserById
   };
 }
 

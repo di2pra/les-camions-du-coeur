@@ -5,6 +5,9 @@ export interface CentreDeDistribution {
   nom: string;
   jour: string;
   informations?:string;
+  participants: [string];
+  responsables: [string];
+  postulants: [string];
 }
 
 export interface DemandeAdhesion extends CreateDemandeAdhesion {

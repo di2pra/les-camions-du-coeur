@@ -1,7 +1,8 @@
 import React, { createContext, useState, useEffect, FC } from "react";
-import { auth, firestore } from "../Firebase";
-import AppLoading from "../components/AppLoading";
+import { auth } from "../Firebase";
 import {User} from "../modules/User/types";
+import PageLoading from "../components/PageLoading";
+import useFirestore from "../hooks/useFirestore";
 
 export const UserContext = createContext<{
   connectedUser: User | null;
@@ -18,35 +19,42 @@ const UserProvider: FC = ({children}) => {
   const [authWasListened, setAuthWasListened] = useState<boolean | null>(null);
   const [connectedUser, setConnectedUser] = useState<User | null>(null);
 
+  const {getUserById} = useFirestore();
+
   useEffect(() => {
+
     if(authToListen) {
       const unsubscribe = auth.onAuthStateChanged(async user => {
         
         if (user) {
 
-          try {
-            const userData = await firestore.collection('utilisateurs').doc(user.uid).get();       
+          getUserById(user.uid).then((user) => {
 
-            setConnectedUser({
-              ...userData.data() as User,
-              uid: user.uid
-            });
+            setConnectedUser(user);
 
-          } catch (error) {
+          }).catch(() => {
+
             setConnectedUser(null);
-          }
+            
+          }).finally(() => {
+
+            setAuthWasListened(true);
+
+          });   
 
         } else {
-          setConnectedUser(null);
-        }
 
-        setAuthWasListened(true);
+          setConnectedUser(null);
+          setAuthWasListened(true);
+          
+        }
 
       });
 
       return unsubscribe;
     }
-  }, [authToListen]);
+
+  }, [authToListen, getUserById]);
 
   const setProfilPic = (profil_pic: string, cloud_ref: string) => {
     setConnectedUser((prevState) => ({...prevState as User, profil_pic: profil_pic, profil_pic_ref: cloud_ref}))
@@ -61,7 +69,7 @@ const UserProvider: FC = ({children}) => {
     }}>
       {children}
     </UserContext.Provider>
-    : <AppLoading />
+    : <PageLoading />
   );
 
 }

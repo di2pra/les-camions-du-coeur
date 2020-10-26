@@ -36,7 +36,7 @@ const PlanningCard : FC<Props> = ({planning, connectedUser, centre, membres}) =>
       }
     });
 
-    updatePlanningParticipant(centre.uid, connectedUser.uid, distribution.data.uid, distribution.data.participants).then((distribution) => {
+    updatePlanningParticipant(connectedUser.uid, distribution.data.uid, distribution.data.participants).then((distribution) => {
 
       if(isMounted.current) setDistributionData((prevState) => {
         return {
@@ -55,7 +55,7 @@ const PlanningCard : FC<Props> = ({planning, connectedUser, centre, membres}) =>
 
     });
     
-  }, [updatePlanningParticipant, isMounted, centre.uid, connectedUser.uid, distribution.data.uid, distribution.data.participants]);
+  }, [updatePlanningParticipant, isMounted, connectedUser.uid, distribution.data.uid, distribution.data.participants]);
 
 
   useEffect(() => {

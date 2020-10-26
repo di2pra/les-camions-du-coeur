@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import {DemandeAdhesion} from "../../types";
 import {User} from "../../../User/types";
 import AlertBox from '../../../../components/AlertBox';
 
@@ -8,16 +7,16 @@ import AlertBox from '../../../../components/AlertBox';
 interface Props {
   connectedUser: User | null;
   onRegisterClick: () => void;
-  adhesion: DemandeAdhesion | null;
   isConnectedUserMember: boolean;
+  postulants: [string]
 }
 
-const RegisterSection : FC<Props> = ({connectedUser, onRegisterClick, adhesion, isConnectedUserMember}) => {
+const RegisterSection : FC<Props> = ({postulants, connectedUser, onRegisterClick, isConnectedUserMember}) => {
 
   if(connectedUser) {
     if(isConnectedUserMember) {
       return null;
-    } else if(adhesion && adhesion.utilisateur === connectedUser.uid) {
+    } else if(postulants.includes(connectedUser.uid)) {
       return <AlertBox error={{type: "info", message: "Votre demande d'adhésion pour cette distribution est en attente de validation par un responsable."}} />
     } else {
       return(

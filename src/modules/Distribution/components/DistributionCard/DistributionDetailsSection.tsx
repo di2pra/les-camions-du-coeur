@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from 'react';
+import React, { useState, FC } from 'react';
 import { capitalize } from '../../../../components/Helpers';
 
 import { CentreDeDistribution } from '../../types';
@@ -15,17 +15,8 @@ const DistributionDetailSection: FC<Props> = ({centre, isConnectedUserResponsabl
 
   const [state, setState] = useState<{editMode: boolean; value: string}>({
     editMode: false,
-    value: ""
+    value: centre.informations || ''
   });
-
-  useEffect(() => {
-
-    setState({
-      editMode: false,
-      value: centre.informations || ''
-    })
-
-  }, [centre])
 
   const handleTextValueChange = (event : React.ChangeEvent<HTMLTextAreaElement>) => {
     event.preventDefault();
@@ -49,7 +40,6 @@ const DistributionDetailSection: FC<Props> = ({centre, isConnectedUserResponsabl
   const onUpdateSaveClick = (event : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     onSaveCentreDesc(state.value);
-
   }
 
   if(isConnectedUserResponsable) {

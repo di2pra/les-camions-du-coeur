@@ -81,18 +81,30 @@ function Planning() {
     if(jour == null && nom == null) {
 
       // si le chargement da la liste des centres est terminé et qu'il y a des éléments dans la liste
-      if(userCentreList.isProcessing === false && userCentreList.data.length > 0) {
+      if(userCentreList.isProcessing === false) {
 
-        // choisir l'index 0 par défaut
-        let selectedCentreIndexDefault = 0;
-        let selectedCentre = userCentreList.data[selectedCentreIndexDefault];
-  
-        // re-router l'utilisateur vers le centre selectionné par défaut et charger les données spécifiques à ce centre
-        if(selectedCentre != null) {
-          history.push("/planning/" + selectedCentre.nom + '/' + selectedCentre.jour);
+        if(userCentreList.data.length > 0) {
+
+          // choisir l'index 0 par défaut
+          let selectedCentreIndexDefault = 0;
+          let selectedCentre = userCentreList.data[selectedCentreIndexDefault];
+    
+          // re-router l'utilisateur vers le centre selectionné par défaut et charger les données spécifiques à ce centre
+          if(selectedCentre != null) {
+            history.push("/planning/" + selectedCentre.nom + '/' + selectedCentre.jour);
+          }
+
+        } else {
+          setError(
+            {
+              type: "warning",
+              message: "Vous devez d'abord adhérer à une distribution pour pouvoir consulter son planning."
+            }
+          )
         }
 
       }
+      
     //  si l'utilisateur arrive directement vers le route du centre
     } else {
 
@@ -133,7 +145,7 @@ function Planning() {
         setSelectedCentreDataIsLoading(true);
   
     
-        getCentreMembreList(userCentreList.data[selectedCentreIndex].uid).then((membres) => {
+        getCentreMembreList(userCentreList.data[selectedCentreIndex].participants, userCentreList.data[selectedCentreIndex].responsables).then((membres) => {
   
           loadingTerminated[0] = true;
     
