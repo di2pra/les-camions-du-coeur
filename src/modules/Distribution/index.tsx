@@ -175,11 +175,6 @@ function Distribution() {
     state.centreDemandeAdhesionUserList != null
   ) {
 
-    console.log({
-      state: state,
-      centreList: centreList
-    });
-
     return <DistributionCard 
     connectedUser={connectedUser}
     centre={state.selectedCentre}
@@ -193,11 +188,6 @@ function Distribution() {
     isConnectedUserResponsable={state.selectedCentre.responsables.includes(connectedUser.uid)}
     />;
   }
-
-  console.log({
-    state: state,
-    centreList: centreList
-  });
 
   return (
     <div className="container-fluid">

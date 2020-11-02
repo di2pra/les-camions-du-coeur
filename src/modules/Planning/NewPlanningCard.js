@@ -1,10 +1,10 @@
-import React from 'react';
-import {PlusIcon} from '../../components/Icons';
+//import React from 'react';
+//import {PlusIcon} from '../../components/Icons';
 
 function NewPlanningCard () {
 
   return (
-    <div className="container-fluid container-80">
+    /*<div className="container-fluid container-80">
       <div className="planning-item-container">
         <section className="header">
           <div className="title">
@@ -22,7 +22,8 @@ function NewPlanningCard () {
         </section>
         
       </div>
-    </div>
+    </div>*/
+    null
   )
   
 }

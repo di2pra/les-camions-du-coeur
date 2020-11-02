@@ -31,14 +31,11 @@ const useCentreForm = (connectedUser: User | null, updateSelectedCentre: (centre
 
   useEffect(() => {
 
-    console.log("useEffect : load user list");
-
     if(
       typeof state.selectedCentre?.participants !== "undefined" && 
       typeof state.selectedCentre?.responsables !== "undefined" &&
       connectedUser != null) {
 
-        console.log("getCentreMembreList");
         getCentreMembreList(state.selectedCentre.participants, state.selectedCentre.responsables).then((membreList) => {
 
           if(typeof state.selectedCentre?.responsables !== "undefined" && state.selectedCentre.responsables.includes(connectedUser.uid)) {
@@ -100,8 +97,6 @@ const useCentreForm = (connectedUser: User | null, updateSelectedCentre: (centre
 
   useEffect(() => {
 
-    console.log("useEffect : load centre adhesion");
-
     if(typeof state.selectedCentre?.postulants !== "undefined" &&
     typeof state.selectedCentre?.responsables !== "undefined" &&
     connectedUser != null
@@ -109,7 +104,6 @@ const useCentreForm = (connectedUser: User | null, updateSelectedCentre: (centre
 
       if(state.selectedCentre.responsables.includes(connectedUser.uid)) {
 
-        console.log("getCentreDemandeAdhesionWithUserInfoList");
         getCentreDemandeAdhesionWithUserInfoList(state.selectedCentre.postulants).then((demandeAdhesionUserList) => {
 
           setState(prevState => {

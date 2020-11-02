@@ -3,25 +3,12 @@ import { useCallback } from 'react';
 import { firestore, firebaseApp } from "../Firebase";
 import {daysGenerator} from "../components/Helpers";
 import {
-  CentreDeDistribution,
-  DemandeAdhesion,
+  CentreDeDistribution
 } from "../modules/Distribution/types";
 import { IPlanning } from '../modules/Planning/types';
 import { User, MemberWithUserInfo, CreateUser } from "../modules/User/types";
 
 function useFirestore() {
-
-  const getUserDemandeAdhesion = useCallback(async (centreUid: string, userUid:string) : Promise<DemandeAdhesion | null> => {
-
-    const adhesionRef = await firestore.collection("demandeAdhesion").where("centre", "==", centreUid).where("utilisateur", "==", userUid).get();
-
-    if(!adhesionRef.empty) {
-      return {...adhesionRef.docs[0].data(), uid: adhesionRef.docs[0].id} as DemandeAdhesion
-    }
-
-    return null;
-
-  }, []);
 
   const getCentreDemandeAdhesionWithUserInfoList = useCallback(async (postulants: [string]) : Promise<User[]> => {
 
@@ -261,8 +248,7 @@ function useFirestore() {
 
   }, [])
 
-  return {
-    getUserDemandeAdhesion, 
+  return { 
     getCentreDemandeAdhesionWithUserInfoList, 
     getCentreMembreList,
     getUserCentreList,

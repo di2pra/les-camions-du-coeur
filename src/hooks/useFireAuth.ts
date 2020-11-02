@@ -65,9 +65,7 @@ function useFireAuth() {
     logInUser,
     createUser
   };
+  
 }
-
-
-
 
 export default useFireAuth;

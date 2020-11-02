@@ -48,7 +48,7 @@ function Compte() {
     }
 
     return contains;
-  }, [display, updateState, loadCroppie]); 
+  }, [display, updateState, loadCroppie, CroppieDomContainer]); 
 
   return (
     <div id="account-management">

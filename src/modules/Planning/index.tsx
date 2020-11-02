@@ -221,11 +221,15 @@ function Planning() {
         <AlertBox error={error} />
       </div>
     )
-  } else if(userCentreList.isProcessing === null || userCentreList.isProcessing === true || selectedCentreDataIsLoading === null || selectedCentreDataIsLoading === true) {
+  }
+  
+  if(userCentreList.isProcessing === null || userCentreList.isProcessing === true || selectedCentreDataIsLoading === null || selectedCentreDataIsLoading === true) {
     
     return (<PageLoading />);
   
-  }  else if(selectedCentreIndex != null) {
+  }
+  
+  if(selectedCentreIndex != null) {
     return (
       <div className="container-fluid container-80">
         <DistributionListContainer centres={userCentreList.data} selectedCentreIndex={selectedCentreIndex} updateSelectedCentre={updateSelectedCentre} />
@@ -237,9 +241,9 @@ function Planning() {
       </div>
     )
 
-  } else {
-    return null
   }
+
+  return null
 
 }
 

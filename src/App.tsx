@@ -7,7 +7,6 @@ import Home from './modules/Home';
 import {UserContext} from "./providers/UserProvider";
 
 const Planning = lazy(() => import('./modules/Planning'));
-const NewPlanningCard = lazy(() => import('./modules/Planning/NewPlanningCard'));
 const Distribution = lazy(() => import('./modules/Distribution'));
 const Signup = lazy(() => import('./modules/Auth/Signup'));
 const Logout = lazy(() => import('./modules/Auth/Logout'));
@@ -26,7 +25,6 @@ function App() {
       <Suspense fallback={<PageLoading/>}>
         <Switch>
           <Route exact path="/" component={Home}/>
-          <Route exact path="/new" render={() => (connectedUser == null) ? <Redirect to="/connexion"/> : <NewPlanningCard/>} />
           <Route exact path="/distribution/:nom?/:jour?" render={() => (connectedUser == null) ? <Redirect to="/connexion"/> : <Distribution />} />
           <Route exact path="/planning/:nom?/:jour?" render={() => (connectedUser == null) ? <Redirect to="/connexion"/> : <Planning />} />
           <Route exact path="/compte" render={() => (connectedUser == null) ? <Redirect to="/connexion"/> : <Compte/>} />
