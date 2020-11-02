@@ -1,4 +1,5 @@
 // preprocessor variables
+$responsive-width-xs: 370px;
 $responsive-width-s: 576px;
 $responsive-width-m: 768px;
 $responsive-width-l: 992px;
@@ -194,7 +195,7 @@ button:focus {
   grid-template-columns: repeat(1, 1fr);
   grid-auto-rows: 1fr;
 
-  @media (min-width: var(--responsive-width-s)) {
+  @media (min-width: $responsive-width-s) {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -305,7 +306,7 @@ button:focus {
   
     .planning-card-header {
       background-color: $base-color;
-      padding: 1rem;
+      padding: 0.8rem;
       border-radius: calc(.5rem - 1px) calc(.5rem - 1px) 0 0;
   
   
@@ -316,56 +317,76 @@ button:focus {
       @media (min-width: $responsive-width-l) {
         flex-flow: row nowrap;
       }
-  
-  
-      h5 {
-        font-size: 1rem;
+
+      .header-title {
+        flex-grow: 1;
         color: white;
         text-align: center;
-        padding: 2.5px 0 20px 0;
-        
-      
-  
-        flex-grow: 1;
-  
-        @media (min-width: $responsive-width-l) {
-          font-size: 1.5rem;
-          text-align: left;
-          padding: 2.5px 0;
-        }
-  
-      }
 
-      /*.distribution-title {
-        font-size: 0.6rem;
-        color: white;
-        text-align: center;
-        padding: 5px 0 20px 0;
-        
-      
-  
-        flex-grow: 1;
-  
         @media (min-width: $responsive-width-l) {
-          font-size: 1.2rem;
           text-align: left;
-          padding: 5px 0;
         }
 
-        div {
+
+        h4 {
+          font-size: 1rem;
+          padding: 2.5px 0 5px 0;
+          
+    
+          @media (min-width: $responsive-width-l) {
+            font-size: 1.5rem;
+            padding: 2.5px 0;
+          }
+    
+        }
+
+        .header-sub-title {
+
           display: flex;
           align-items: center;
+          flex-flow: row nowrap;
+          padding-bottom: 10px;
+          justify-content: center;
+
+
+          @media (min-width: $responsive-width-l) {
+            padding: 0;
+            justify-content: right;
+          }
+          
 
           i {
-            width: 20px;
-            height: 20px;
-            display: block;
-            margin-right: 10px;
+            width: 1.4rem;
+            height: 1.4rem;
+            margin: 5px 10px 5px 0;
+
+
+            @media (min-width: $responsive-width-l) {
+              width: 2rem;
+              height: 2rem;
+            }
+            
+
           }
+
+          h5 {
+            font-size: 0.8rem;
+            display: inline-block;
+      
+            @media (min-width: $responsive-width-l) {
+              font-size: 1.3rem;
+            }
+      
+          }
+
         }
 
         
-      }*/
+
+      }
+  
+  
+      
 
   
     }
@@ -392,93 +413,7 @@ button:focus {
   
       .buttons-container {
         text-align: center;
-        
       }
-  
-      .user-list-container {
-        display: grid;
-        grid-template-columns: repeat(1, 1fr);
-        grid-auto-rows: 1fr;
-  
-        @media (min-width: $responsive-width-s) {
-          grid-template-columns: repeat(3, 1fr);
-        }
-  
-        // Medium devices (tablets, 768px and up)
-        @media (min-width: $responsive-width-m) {
-          grid-template-columns: repeat(4, 1fr);
-        }
-  
-        // Large devices (desktops, 992px and up)
-        @media (min-width: $responsive-width-l) { 
-          grid-template-columns: repeat(6, 1fr);
-        }
-  
-        .planning-user {
-          padding: 0.5rem;
-          margin: 0.1rem;
-  
-          display: flex;
-          flex-flow: row wrap;
-          align-content: flex-start;
-          align-items: center;
-  
-          //height: 50px;
-  
-          @media (min-width: $responsive-width-s) {
-            //height: 100px;
-            text-align: center;
-          }
-  
-  
-          .planning-user-name {
-  
-            flex-grow: 1;
-  
-            p {
-              margin: 0;
-              color: $base-color;
-  
-              @media (min-width: $responsive-width-s) {
-                margin-top: 5px;
-              }
-  
-            }
-          }
-  
-          .planning-user-image {
-  
-            width: 2.5rem;
-            height: 2.5rem;
-            margin-right: 20px;
-  
-            @media (min-width: $responsive-width-s) {
-              width: 100%;
-              height: 4rem;
-              margin-right: 0px;
-            }
-  
-            .planning-user-image-content {
-              width: 100%;
-              height: 100%;
-              border-radius: 50%;
-              display: inline-block;
-              background-repeat:no-repeat;
-              background-position: center center;
-              background-size: cover;
-  
-              @media (min-width: $responsive-width-s) {
-                width: 4rem;
-                height: 4rem;
-              }
-  
-            }
-            
-          }
-  
-        }
-  
-      } 
   
     }
 
@@ -604,39 +539,6 @@ button:focus {
       
     }
   }
-
-  /*.croppie-dialog {
-    min-width: 300px;
-    max-width: 350px;
-    width: 70%;
-    border-radius: 20px;
-    box-shadow: 0px 0px 20px -5px rgba(204,204,204,1);
-    background-color: white;
-    overflow: hidden;
-    position: absolute;
-    margin-left: auto;
-    margin-right: auto;
-    left: 0;
-    right: 0;
-    margin-top: 90px;
-    z-index: 2;
-    margin-bottom: 30px;
-    padding: 30px 10px 0px 10px;
-  
-    
-  
-    .buttons-container {
-      display: flex;
-      flex-flow: column wrap;
-      gap: 10px;
-      margin: 0 0 10px;
-
-      button {
-        width: 100%;
-      }
-  
-    }
-  }*/
 
 
   .croppie-container {
@@ -987,6 +889,13 @@ button:focus {
 
   section {
     margin-bottom: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+
+    @media (min-width: $responsive-width-s) {
+      margin-left: 0px;
+      margin-right: 0px;
+    }
 
     h1 {
       color: $base-color;
@@ -998,99 +907,13 @@ button:focus {
   }
 
 
-  .user-list-container {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    grid-auto-rows: 1fr;
-
-    @media (min-width: $responsive-width-s) {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    // Medium devices (tablets, 768px and up)
-    @media (min-width: $responsive-width-m) {
-      grid-template-columns: repeat(6, 1fr);
-    }
-
-    // Large devices (desktops, 992px and up)
-    @media (min-width: $responsive-width-l) { 
-      grid-template-columns: repeat(8, 1fr);
-    }
-
-    .item-user {
-      padding: 0.5rem;
-      margin: 0.1rem;
-
-      display: flex;
-      flex-flow: row wrap;
-      align-content: flex-start;
-      align-items: center;
-
-      //height: 50px;
-
-      @media (min-width: $responsive-width-s) {
-        //height: 100px;
-        text-align: center;
-      }
-
-
-      .item-user-name {
-
-        flex-grow: 1;
-
-        p {
-          margin: 0;
-          color: $base-color;
-
-          @media (min-width: $responsive-width-s) {
-            margin-top: 5px;
-          }
-
-        }
-      }
-
-      .item-user-image {
-
-        width: 2.5rem;
-        height: 2.5rem;
-        margin-right: 20px;
-
-        @media (min-width: $responsive-width-s) {
-          width: 100%;
-          height: 4rem;
-          margin-right: 0px;
-        }
-
-        .item-user-image-content {
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-          display: inline-block;
-          background-repeat:no-repeat;
-          background-position: center center;
-          background-size: cover;
-
-          @media (min-width: $responsive-width-s) {
-            width: 4rem;
-            height: 4rem;
-          }
-
-        }
-        
-      }
-
-    }
-
-  }
-
-
   .demande-adhesion-list {
 
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     grid-auto-rows: 1fr;
 
-    @media (min-width: var(--responsive-width-s)) {
+    @media (min-width: $responsive-width-s) {
       grid-template-columns: repeat(2, 1fr);
     }
 
@@ -1143,6 +966,10 @@ button:focus {
 
   .desc-section {
 
+    p {
+      white-space: pre-line;
+    }
+
     textarea {
       width: 100%;
     }
@@ -1183,5 +1010,167 @@ button:focus {
     font-weight: 600;
     line-height: 30px;
     display: inline-block;
+  }
+}
+
+
+
+
+.user-list-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-auto-rows: 1fr;
+
+  @media (min-width: $responsive-width-xs) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: $responsive-width-s) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  // Medium devices (tablets, 768px and up)
+  @media (min-width: $responsive-width-m) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  // Large devices (desktops, 992px and up)
+  @media (min-width: $responsive-width-l) { 
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  // Large devices (desktops, 992px and up)
+  @media (min-width: $responsive-width-xl) { 
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .user {
+    padding: 0.3rem;
+    margin: 0.1rem;
+
+    display: flex;
+    flex-flow: row wrap;
+    align-content: flex-start;
+    align-items: center;
+
+    //@media (min-width: $responsive-width-s) {
+      padding: 0.5rem;
+      text-align: center;
+    //}
+
+
+    .user-name {
+
+      flex-grow: 1;
+
+      p {
+        margin: 0;
+        color: $base-color;
+
+        //@media (min-width: $responsive-width-s) {
+          margin-top: 5px;
+        //}
+
+      }
+    }
+
+    .user-image {
+
+      //width: 2.5rem;
+      height: 2.5rem;
+      margin-right: 15px;
+
+      //@media (min-width: $responsive-width-s) {
+        width: 100%;
+        height: 4rem;
+        margin-right: 0px;
+      //}
+
+      .user-image-content {
+        //width: 100%;
+        //height: 100%;
+        border-radius: 50%;
+        display: inline-block;
+        background-repeat:no-repeat;
+        background-position: center center;
+        background-size: cover;
+        position: relative;
+
+        //@media (min-width: $responsive-width-s) {
+          width: 4rem;
+          height: 4rem;
+        //}
+
+        
+
+      }
+      
+    }
+
+    &.user-responsable {
+      .user-image {
+        .user-image-content {
+          &::after {
+            content: "Resp.";
+            background-color: $base-color;
+            padding: 0px 4px;
+            color: white;
+            border-radius: 5px;
+            position: absolute;
+            bottom: -5px;
+          }
+        }
+      }
+    }
+
+  }
+
+}
+
+
+.planning-item-container {
+  background-color: lighten($base-color, 50);
+  border-left: 5px solid $base-color;
+  border-radius: 5px;
+  padding: 10px;
+
+  section.header {
+
+    display: flex;
+    align-content: center;
+    align-items: center;
+    
+    .title {
+      flex-grow: 1;
+      h1 {
+        font-size: 1.5rem;
+        color: $base-color;
+        padding: 0px 15px 0px 10px;
+      }
+    
+      h2 {
+        font-size: 1rem;
+        color: $secondary-color;
+        padding: 0px 15px 0px 10px;
+      }
+    }
+  
+    .actions-container {
+      button {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        color: white;
+        background-color: green;
+        outline: none;
+        margin: 15px;
+  
+        .btn-icon {
+          width: 30px;
+          height: 30px;
+          margin: auto;
+        }
+      }
+    }
   }
 }
