@@ -10,10 +10,49 @@ const firebaseErrors: FirebaseErrors = {
   'auth/user-not-found': 'Le compte introuvable avec cette adresse email.',
   'auth/wrong-password': 'Le mot de passe est incorrect.',
   'auth/too-many-requests' : 'Trop de tentatives de connexion, veuillez recommencer plus tard.',
-  'auth/email-already-in-use': 'Cette adresse email est déjà utilisée par un autre compte.'
+  'auth/email-already-in-use': 'Cette adresse email est déjà utilisée par un autre compte.',
+  'auth/expired-action-code': 'Votre demande de réinitialisation du mot de passe a expirée ou ce lien a déjà été utilisé.',
+  'auth/invalid-action-code': 'Ce lien est invalide'
 }; // list of firebase error codes to alternate error messages
 
 function useFireAuth() {
+
+  const confirmPasswordReset = useCallback(async (code : string, newPassword: string) => {
+
+    try {
+      await auth.confirmPasswordReset(code, newPassword);
+    } catch (error) {
+      throw Error(firebaseErrors[error.code] || error.message);
+    }
+
+    
+  }, [])
+
+  const verifyPasswordResetCode = useCallback(async (code : string) => {
+
+    try {
+      await auth.verifyPasswordResetCode(code);
+    } catch (error) {
+      throw Error(firebaseErrors[error.code] || error.message);
+    }
+
+    
+  }, [])
+
+  const requestResetPassword = useCallback(async (email : string) => {
+
+    try {
+
+      await auth.sendPasswordResetEmail(email)
+
+    } catch (error) {
+
+      throw Error(firebaseErrors[error.code] || error.message);
+
+    }
+    
+
+  }, []);
 
 
   const changePassword = useCallback(async (password) => {
@@ -61,9 +100,12 @@ function useFireAuth() {
   }, [])
 
   return {
+    requestResetPassword,
     changePassword,
     logInUser,
-    createUser
+    createUser,
+    confirmPasswordReset,
+    verifyPasswordResetCode
   };
   
 }

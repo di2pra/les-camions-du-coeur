@@ -15,7 +15,7 @@ interface Props {
 
 const CardHeader : FC<Props> = ({distribution, connectedUser, onUpdateClick, centre}) => {
 
-  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
 
   const button: (isUpdating: boolean) => any = (isUpdating) => {
     if(isUpdating) {
@@ -29,7 +29,7 @@ const CardHeader : FC<Props> = ({distribution, connectedUser, onUpdateClick, cen
     }
   }
 
-  const date = new Intl.DateTimeFormat('fr-FR', options).format(new Date(distribution.data.date))
+  const date = new Intl.DateTimeFormat('fr-FR', options).format(new Date(distribution.data.date));
 
   const nbrParticipants = distribution.data.participants.length;
 

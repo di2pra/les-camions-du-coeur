@@ -13,7 +13,12 @@ export  const useHandleAvatarUpload = (
   const upload = useCallback(
     (imageAsFile: any) => {
       const cloudRef = `/profile_pic/${uuidv4()}.png`;
-      const uploadTask = storage.ref(cloudRef).put(imageAsFile);
+
+      var metadata = {
+        cacheControl: 'public,max-age=4000',
+      }
+
+      const uploadTask = storage.ref(cloudRef).put(imageAsFile, metadata);
 
       uploadTask.on(
         "state_changed",

@@ -14,7 +14,7 @@ const Login = lazy(() => import('./modules/Auth/Login'));
 const Compte = lazy(() => import('./modules/Compte'));
 const ResetPassword = lazy(() => import('./modules/Auth/ResetPassword'));
 const PageNotFound = lazy(() => import('./modules/PageNotFound'));
-
+const Action = lazy(() => import('./modules/Action'));
 
 function App() {
   const {connectedUser} = useContext(UserContext);
@@ -32,6 +32,7 @@ function App() {
           <Route exact path="/connexion" render={() => (connectedUser == null) ? <Login/> : <Redirect to="/"/> }/>
           <Route exact path="/deconnexion" render={() => (connectedUser == null) ? <Redirect to="/"/> : <Logout />  } />
           <Route exact path="/reinit-mdp" render={() => (connectedUser == null) ? <ResetPassword/> : <Redirect to="/"/> } />
+          <Route exact path="/action" component={Action} />
           <Route component={PageNotFound} />
         </Switch>
       </Suspense>

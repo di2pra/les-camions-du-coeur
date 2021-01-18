@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import {UserContext} from "./../providers/UserProvider";
-import {CalendarIcon, RegisterIcon, LoginIcon, AccountIcon, TruckIcon} from './../components/Icons';
+import {UserContext} from "../providers/UserProvider";
+import {CalendarIcon, RegisterIcon, LoginIcon, AccountIcon, TruckIcon} from '../components/Icons';
 
 function Home() {
 
@@ -43,7 +43,6 @@ function Home() {
     )
     
   } else {
-    
     return (
       <div className="container-fluid">
         <div className="home-card-container">
