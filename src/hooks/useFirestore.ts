@@ -83,12 +83,14 @@ function useFirestore() {
 
   const getCentrePlanning = useCallback(async (centre:CentreDeDistribution) : Promise<IPlanning[]> => {
 
+    const nbrJour = 20;
+
     const today = (new Date()).toISOString().split("T")[0];
     let planningRef = await firestore.collection("plannings")
       .where("date", ">=", today)
       .where("centre", "==", centre.uid)
       .orderBy("date")
-      .limit(5)
+      .limit(nbrJour)
       .get();
 
     let planningList: IPlanning[] = [];
@@ -96,8 +98,10 @@ function useFirestore() {
       return { ...doc.data(), uid: doc.id } as IPlanning;
     });
 
-    if(planningRef.size < 5) {
-      let days = daysGenerator(centre.jour);
+    if(planningRef.size < nbrJour) {
+      let days = daysGenerator(centre.jour, nbrJour);
+
+      console.log(days);
 
       for(var i =0; i< planningList.length; i++ ) {
         for(var j= 0; j< days.length;j++) {
@@ -127,7 +131,7 @@ function useFirestore() {
       // Commit the batch
       await batch.commit();
 
-      let planningRef = await firestore.collection("plannings").where("date", ">=", today).where("centre", "==", centre.uid).orderBy("date").limit(5).get();
+      let planningRef = await firestore.collection("plannings").where("date", ">=", today).where("centre", "==", centre.uid).orderBy("date").limit(nbrJour).get();
 
       planningList = planningRef.docs.map((doc)  => {
         return { ...doc.data(), uid: doc.id } as IPlanning;

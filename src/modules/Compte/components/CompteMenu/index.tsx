@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ChangeEvent } from 'react';
+import React, { FC, ChangeEvent } from 'react';
 import { CompteDisplayOptions } from '../../utils';
 
 interface Props {
@@ -6,7 +6,7 @@ interface Props {
   loadCroppie: (e: ChangeEvent) => void;
 }
 
-const CompteMenu: FunctionComponent<Props> = ({ updateState, loadCroppie }) => {
+const CompteMenu: FC<Props> = ({ updateState, loadCroppie }) => {
   return (
     <div className="buttons-container menu">
       <div className="file-input-wrapper">

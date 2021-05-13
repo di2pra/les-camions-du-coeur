@@ -14,8 +14,8 @@ export function uuidv4() {
 }
 
 
-export function daysGenerator(jour) {
-  let days = [null, null, null, null, null];
+export function daysGenerator(jour, nbrJourToGenerate) {
+  let days = Array(nbrJourToGenerate).fill(null);
 
   const jourDeSemaine = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
 
