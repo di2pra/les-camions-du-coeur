@@ -15,8 +15,6 @@ interface Props {
 
 const CardHeader : FC<Props> = ({distribution, connectedUser, onUpdateClick, centre}) => {
 
-  //const options  = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-
   const button: (isUpdating: boolean) => any = (isUpdating) => {
     if(isUpdating) {
       return null
@@ -39,7 +37,7 @@ const CardHeader : FC<Props> = ({distribution, connectedUser, onUpdateClick, cen
         <h4>{capitalize(centre.nom)} - {date}</h4>
         <div className="header-sub-title">
           <i><PeopleIcon /></i>
-          <h5>{nbrParticipants} {(nbrParticipants <=1) ? 'participant' : 'participants'}</h5>
+          <h5>{nbrParticipants} {(nbrParticipants <=1) ? 'participant' : 'participants'} / {centre.benevoles == null ? 0 : centre.benevoles} participants nécessaires</h5>
         </div>
       </div>
       

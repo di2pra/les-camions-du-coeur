@@ -79,7 +79,7 @@ const PlanningCard : FC<Props> = ({planning, connectedUser, centre, membres}) =>
     <div className="planning-card-container">
       <div className="planning-card">
         <CardHeader distribution={distribution} connectedUser={connectedUser} centre={centre} onUpdateClick={onUpdateClick} />
-        <CardBody distribution={distribution} participantList={participantList} error={error} />
+        <CardBody distribution={distribution} centre={centre} participantList={participantList} error={error} />
         <CardFooter distribution={distribution}/>
       </div>
     </div>

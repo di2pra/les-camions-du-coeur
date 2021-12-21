@@ -66,27 +66,61 @@ const Login: FC<{}> = () => {
         <div className="form-container-x">
           <div className="form">
             <AlertBox error={error} />
-            <form  onSubmit={handleOnSubmit}>
+            <form onSubmit={handleOnSubmit}>
               <div className="form-group">
                 <label htmlFor="inputEmail">Email*</label>
-                <input autoComplete="username" name="email" value={state.email.value || ''} onChange={handleOnChange} type="email" className={"form-control " + (state.email.classValue || '')} id="inputEmail" placeholder="Votre adresse email" />
+                <input
+                  autoComplete="username"
+                  name="email"
+                  value={state.email.value || ""}
+                  onChange={handleOnChange}
+                  type="email"
+                  className={"form-control " + (state.email.classValue || "")}
+                  id="inputEmail"
+                  placeholder="Votre adresse email"
+                />
                 <div className="invalid-feedback">{state.email.error}</div>
               </div>
               <div className="form-group">
                 <label htmlFor="inputPassword">Mot de passe*</label>
-                <input autoComplete="current-password" name="password" value={state.password.value || ''} onChange={handleOnChange} type="password" className={"form-control " + (state.password.classValue || '')} id="inputPassword" placeholder="Votre mot de passe" />
+                <input
+                  autoComplete="current-password"
+                  name="password"
+                  value={state.password.value || ""}
+                  onChange={handleOnChange}
+                  type="password"
+                  className={
+                    "form-control " + (state.password.classValue || "")
+                  }
+                  id="inputPassword"
+                  placeholder="Votre mot de passe"
+                />
                 <div className="invalid-feedback">{state.password.error}</div>
               </div>
               <div className="buttons-container">
-                <button type="submit" className="btn-animated primary" >Se connecter</button>
-                <button onClick={(e) => history.push('/reinit-mdp')} type="button" className="btn-animated secondary" >Mot de passe oublié ?</button>
-                <button onClick={(e) => history.push('/sinscrire')} type="button" className="btn-animated secondary" >S'inscrire</button>
+                <button type="submit" className="btn-animated primary">
+                  Se connecter
+                </button>
+                <button
+                  onClick={(e) => history.push("/reinit-mdp")}
+                  type="button"
+                  className="btn-animated secondary"
+                >
+                  Mot de passe oublié ?
+                </button>
+                <button
+                  onClick={(e) => history.push("/sinscrire")}
+                  type="button"
+                  className="btn-animated secondary"
+                >
+                  S'inscrire
+                </button>
               </div>
             </form>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
 }

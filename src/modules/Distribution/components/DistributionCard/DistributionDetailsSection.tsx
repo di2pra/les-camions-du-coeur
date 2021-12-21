@@ -20,9 +20,7 @@ const DistributionDetailSection: FC<Props> = ({centre, isConnectedUserResponsabl
 
   const handleTextValueChange = (event : React.ChangeEvent<HTMLTextAreaElement>) => {
     event.preventDefault();
-
     setState({editMode: true, value: event.target.value});
-
   }
 
   const handleEditModeChange = (event : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -42,13 +40,12 @@ const DistributionDetailSection: FC<Props> = ({centre, isConnectedUserResponsabl
     onSaveCentreDesc(state.value);
   }
 
-  if(isConnectedUserResponsable) {
+  let sectionContent = null;
 
+  if(isConnectedUserResponsable) {
     if(state.editMode) {
 
-      return (
-        <section className="desc-section">
-          <h1>Distribution à {capitalize(centre.nom)} le {centre.jour}</h1>
+        sectionContent = (<React.Fragment>
           <form>
             <textarea rows={10} value={state.value} onChange={handleTextValueChange} />
             <div className="buttons-container">
@@ -56,35 +53,47 @@ const DistributionDetailSection: FC<Props> = ({centre, isConnectedUserResponsabl
               <button onClick={handleEditModeChange} type="button" className="btn-animated secondary">Annuler</button>
             </div>
           </form>
-        </section>
-      )
-
-      
+        </React.Fragment>);
   
     } else {
-  
-      return (
-        <section className="desc-section">
-          <h1>Distribution à {capitalize(centre.nom)} le {centre.jour}</h1>
-          <p>{(!state.value) ? 'Aucune information' : state.value }</p>
-          <div className="buttons-container">
-            <button onClick={handleEditModeChange} type="button" className="btn-animated primary">Modifier</button>
-          </div>
-        </section>
-      )
+
+      sectionContent = (<React.Fragment>
+        <p>{(!state.value) ? 'Aucune information' : state.value }</p>
+        <div className="buttons-container">
+          <button onClick={handleEditModeChange} type="button" className="btn-animated primary">Modifier la description</button>
+        </div>
+      </React.Fragment>);
   
     }
 
   } else {
 
-    return (
-      <section className="desc-section">
-        <h1>Distribution à {capitalize(centre.nom)} le {centre.jour}</h1>
-        <p>{state.value === "" ? 'Aucune information' : state.value }</p>
-      </section>
-    )
+    sectionContent = (<React.Fragment>
+      <p>{state.value === "" ? 'Aucune information' : state.value }</p>
+    </React.Fragment>);
 
   }
+
+  return (
+    <section className="desc-section">
+      <h1>Distribution à {capitalize(centre.nom)} le {centre.jour}</h1>
+      {sectionContent}
+      <div className="kpi-card-container">
+        <div className="kpi-card">
+          <h2>Lieu</h2>
+          <h3>{capitalize(centre.nom)}</h3>
+        </div>
+        <div className="kpi-card">
+          <h2>Jour</h2>
+          <h3>{capitalize(centre.jour)}</h3>
+        </div>
+        <div className="kpi-card">
+          <h2>Bénévoles</h2>
+          <h3>{(centre.benevoles == null ? 0 : centre.benevoles)}</h3>
+        </div>
+      </div>
+    </section>
+  );
 
   
 }

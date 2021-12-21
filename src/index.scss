@@ -346,12 +346,10 @@ button:focus {
           align-items: center;
           flex-flow: row nowrap;
           padding-bottom: 10px;
-          justify-content: center;
 
 
           @media (min-width: $responsive-width-l) {
             padding: 0;
-            justify-content: right;
           }
           
 
@@ -393,6 +391,36 @@ button:focus {
   
     .planning-card-body {
       padding: 1rem;
+
+      .progress-bar-container {
+
+        margin: 0.1rem 0 0.8rem;
+
+        .progress {
+
+          display: flex;
+          height: 1.5rem;
+          overflow: hidden;
+          font-size: .75rem;
+          background-color: #e9ecef;
+          border-radius: .25rem;
+
+
+          .progress-bar {
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: #fff;
+            text-align: center;
+            background-color: $base-color;
+            padding: 0.2rem;
+
+          }
+        }
+
+
+      }
   
       .loading-container {
         width: 75px;
@@ -887,6 +915,42 @@ button:focus {
     }
   }
 
+  .kpi-card-container {
+
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-auto-rows: 1fr;
+
+    @media (min-width: $responsive-width-s) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    // Medium devices (tablets, 768px and up)
+    @media (min-width: $responsive-width-m) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .kpi-card {
+      text-align: center;
+      margin: 0.1rem;
+      padding: 0.5rem;
+
+      h2 {
+        color: $base-color;
+        font-weight: 600;
+      }
+  
+      h3 {
+        margin-top: -0.5rem;
+        font-size: 45px;
+        font-weight: 600;
+      }
+    }
+
+  }
+
+  
+
   section {
     margin-bottom: 20px;
     margin-left: 10px;
@@ -981,13 +1045,8 @@ button:focus {
       button {
         margin: 5px;
       }
-    }
-    
-  }
-
-  
-
-  
+    } 
+  }  
 }
 
 .home-card-body {
@@ -1018,7 +1077,7 @@ button:focus {
 
 .user-list-container {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   grid-auto-rows: 1fr;
 
   @media (min-width: $responsive-width-xs) {
@@ -1041,23 +1100,17 @@ button:focus {
 
   // Large devices (desktops, 992px and up)
   @media (min-width: $responsive-width-xl) { 
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(7, 1fr);
   }
 
   .user {
-    padding: 0.3rem;
-    margin: 0.1rem;
 
     display: flex;
     flex-flow: row wrap;
     align-content: flex-start;
     align-items: center;
-
-    //@media (min-width: $responsive-width-s) {
-      padding: 0.5rem;
-      text-align: center;
-    //}
-
+    padding: 0.5rem;
+    text-align: center;
 
     .user-name {
 
@@ -1066,29 +1119,21 @@ button:focus {
       p {
         margin: 0;
         color: $base-color;
-
-        //@media (min-width: $responsive-width-s) {
-          margin-top: 5px;
-        //}
-
+        margin-top: 5px;
       }
+
     }
 
     .user-image {
 
-      //width: 2.5rem;
       height: 2.5rem;
       margin-right: 15px;
-
-      //@media (min-width: $responsive-width-s) {
-        width: 100%;
-        height: 4rem;
-        margin-right: 0px;
-      //}
+      width: 100%;
+      height: 4rem;
+      margin-right: 0px;
 
       .user-image-content {
-        //width: 100%;
-        //height: 100%;
+
         border-radius: 50%;
         display: inline-block;
         background-repeat:no-repeat;
@@ -1096,12 +1141,8 @@ button:focus {
         background-size: cover;
         position: relative;
 
-        //@media (min-width: $responsive-width-s) {
-          width: 4rem;
-          height: 4rem;
-        //}
-
-        
+        width: 4rem;
+        height: 4rem;
 
       }
       

@@ -8,20 +8,7 @@ interface Props {
 }
 
 const CardFooter: FC<Props> = ({distribution}) => {
-
-  if(distribution.isProcessing || distribution.data.participants.length === 0) {
-    return (null)
-  } else {
-    /*return (
-    <div className="planning-card-footer">
-      <div className="kpi-container">
-        <h2># Participants</h2>
-        <h1>{distribution.data.participants.length}</h1>
-      </div>
-    </div>
-  )*/
-      return null;
-  }
+  return null;
 }
 
 export default CardFooter;

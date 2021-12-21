@@ -17,7 +17,7 @@ const ResponsableSection : FC<Props> = ({membres}) => {
 
   return (
     <section>
-      <h1>Responsable(s)</h1>
+      <h1>Responsables</h1>
       {sectionContent}
     </section>
   )
