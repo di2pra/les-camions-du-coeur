@@ -1,16 +1,11 @@
-export interface Member {
-  uid: string,
-  utilisateur: string;
-  type: string;
-}
-
 export interface MemberWithUserInfo extends User {
-  type: string;
+  responsable: boolean;
   memberUid: string;
 }
 
 export interface User extends CreateUser {
-    uid: string;
+  uid: string;
+  preferences: string[];
 }
 
 export interface CreateUser {

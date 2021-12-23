@@ -88,7 +88,7 @@ const DistributionDetailSection: FC<Props> = ({centre, isConnectedUserResponsabl
           <h3>{capitalize(centre.jour)}</h3>
         </div>
         <div className="kpi-card">
-          <h2>Bénévoles</h2>
+          <h2>Bénévoles Nécessaires</h2>
           <h3>{(centre.benevoles == null ? 0 : centre.benevoles)}</h3>
         </div>
       </div>

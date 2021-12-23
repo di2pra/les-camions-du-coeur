@@ -35,12 +35,10 @@ const UserItem : FC<Props> = ({ user }) => {
 
         let classNameUser = 'user';
 
-        if('type' in user) {
-          classNameUser = 'user' + ((user.type === "responsable") ? ' user-responsable' : '');
+        if('responsable' in user) {
+          classNameUser = 'user' + ((user.responsable) ? ' user-responsable' : '');
         }
-
-    
-
+        
     return (
       <div className={classNameUser}>
         <div className="user-image">

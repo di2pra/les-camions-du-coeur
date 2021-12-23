@@ -11,7 +11,7 @@ interface Props {
 
 const ResponsableSection : FC<Props> = ({membres}) => {
 
-  const responsables = membres.filter((membre) => {return membre.type === "responsable"});
+  const responsables = membres.filter((membre) => {return membre.responsable});
 
   const sectionContent = (responsables.length > 0) ? <UserList users={responsables} /> : <p>Aucun responsable</p>;
 

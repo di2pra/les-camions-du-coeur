@@ -8,13 +8,14 @@ import AlertBox from "../../components/AlertBox";
 import ChangePassword from "./components/ChangePassword";
 import CompteMenu from "./components/CompteMenu";
 import DeleteAccount from "./components/DeleteAccount";
+import ChangePreference from "./components/ChangePreference";
 import { useHandleAvatarUpload } from "./hooks/useHandleAvatarUpload";
 import { CompteDisplayOptions } from "./utils";
-import {User} from "./../../modules/User/types";
+import { User } from "./../../modules/User/types";
 
 function Compte() {
   const [display, setDisplay] = useState(CompteDisplayOptions.MENU);
-  const { connectedUser, setProfilPic } = useContext(UserContext as unknown as React.Context<{connectedUser: User; setProfilPic: (profil_pic: string, cloud_ref: string) => void;}>);
+  const { connectedUser, setProfilPic } = useContext(UserContext as unknown as React.Context<{ connectedUser: User; setProfilPic: (profil_pic: string, cloud_ref: string) => void; }>);
 
   const updateState = useCallback(
     (displayState: CompteDisplayOptions) => setDisplay(displayState),
@@ -45,10 +46,12 @@ function Compte() {
       contains = <DeleteAccount updateState={updateState} />;
     } else if (display === CompteDisplayOptions.PROFILE_UPDATE) {
       contains = <CroppieDomContainer />;
+    } else if (display === CompteDisplayOptions.UPDATE_PREF) {
+      contains = <ChangePreference updateState={updateState} />;
     }
 
     return contains;
-  }, [display, updateState, loadCroppie, CroppieDomContainer]); 
+  }, [display, updateState, loadCroppie, CroppieDomContainer]);
 
   return (
     <div id="account-management">

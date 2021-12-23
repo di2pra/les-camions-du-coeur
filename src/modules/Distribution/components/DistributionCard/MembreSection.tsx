@@ -9,7 +9,7 @@ interface Props {
 
 const MembreSection : FC<Props> = ({membres}) => {
 
-  const participants = membres.filter((membre) => {return membre.type === "membre"});
+  const participants = membres.filter((membre) => {return !membre.responsable});
 
   const sectionContent = (participants.length > 0) ? <UserList users={participants} /> : <p>Aucun membre</p>;
 

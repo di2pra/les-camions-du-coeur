@@ -86,7 +86,7 @@ const ChangePassword: FC<Props> = ({updateState}) => {
           <form onSubmit={handleOnSubmit}>
             <div className="form-row">
               <div className="form-group col-md">
-                <label htmlFor="exampleInputPassword">Mot de passe*</label>
+                <label htmlFor="inputPassword">Mot de passe*</label>
                 <input
                   autoComplete="new-password"
                   name="password"
@@ -96,13 +96,13 @@ const ChangePassword: FC<Props> = ({updateState}) => {
                   className={
                     "form-control " + (state.password.classValue || "")
                   }
-                  id="exampleInputPassword"
+                  id="inputPassword"
                   placeholder="Choisir un mot de passe"
                 />
                 <div className="invalid-feedback">{state.password.error}</div>
               </div>
               <div className="form-group col-md">
-                <label htmlFor="exampleInputPassword2">
+                <label htmlFor="inputPassword2">
                   Confirmez votre mot de passe*
                 </label>
                 <input
@@ -114,7 +114,7 @@ const ChangePassword: FC<Props> = ({updateState}) => {
                   className={
                     "form-control " + (state.password1.classValue || "")
                   }
-                  id="exampleInputPassword1"
+                  id="inputPassword2"
                   placeholder="Confirmez votre mot de passe"
                 />
                 <div className="invalid-feedback">{state.password1.error}</div>

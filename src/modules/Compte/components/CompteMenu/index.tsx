@@ -23,6 +23,13 @@ const CompteMenu: FC<Props> = ({ updateState, loadCroppie }) => {
         </label>
       </div>
       <button
+        onClick={(e) => updateState(CompteDisplayOptions.UPDATE_PREF)}
+        type="button"
+        className="btn-animated primary"
+      >
+        Changer vos préferences
+      </button>
+      <button
         onClick={(e) => updateState(CompteDisplayOptions.CHANGE_PASSWORD)}
         type="button"
         className="btn-animated primary"
